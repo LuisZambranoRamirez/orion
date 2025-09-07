@@ -1,0 +1,17 @@
+{
+  "name": "minerva",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --env-file=.env ./src/index.js",
+    "startDev": "node --watch --env-file=.env ./src/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "5.1.0",
+    "mysql2": "3.14.4",
+    "zod": "4.1.5"
+  }
+}
