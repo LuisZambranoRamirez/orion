@@ -1,4 +1,5 @@
 import {z} from 'zod';
+import { categories } from './enums';
 
 export function validateProductSchema(object) {
   return productSchema.safeParse(object);
@@ -52,7 +53,7 @@ const productSchemaBusinessRules = z.object({
   .string().length(13,{message: "El código de barras debe tener exactamente 13 caracteres"}),
 
   category: z
-  .enum(['Bebidas', 'Abarrotes/Secos', 'Café/Infusiones', 'Lácteos', 'Carnes', 'Snacks/Golosinas', 'Higiene/Cuidado Personal', 'Limpieza/hogar', 'Bebés/Mamá', 'Mascotas','otros'],{
+  .enum(categories,{
     message: "La categoria no es válida"
   })
 });
