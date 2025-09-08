@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "node --env-file=.env ./src/index.js",
     "startDev": "node --watch --env-file=.env ./src/index.js"

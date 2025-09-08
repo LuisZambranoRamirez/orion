@@ -1,6 +1,7 @@
 import {registerProductDB, isProductBarCodeExistsDB, isProductNameExistsDB} from '../data/product.js';
 import { BusinessError } from '../errors/businessError.js';
 import { validateProductSchemaBusinessRules } from '../schemas/product.js';
+import { categories } from '../schemas/enums.js';
 
 export async function registerProduct(result) {
     // Reglas de negocio
@@ -27,4 +28,7 @@ export async function updateProductField(productoId, field, value) {
     
 }
 
+export function getCategoriesProduct() {
+  return categories;
+}
 

@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import { categories } from './enums';
+import { categories } from './enums.js';
 
 export function validateProductSchema(object) {
   return productSchema.safeParse(object);

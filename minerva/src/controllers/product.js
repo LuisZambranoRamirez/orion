@@ -1,4 +1,4 @@
-import {registerProduct} from '../services/product.js';
+import {registerProduct, getCategoriesProduct} from '../services/product.js';
 import {validateProductSchema} from '../schemas/product.js';
 
 export async function register(req, res) {
@@ -13,9 +13,9 @@ export async function register(req, res) {
     await registerProduct(result.data)
   } catch (error) {
     if (error.name === 'BusinessError') {
-      return res.status(400).json({ error: error.message });
+      return res.status(422).json({ error: error.message });
     } else if (error.name === 'DataBaseError') {
-    
+      return res.status(500).json({ error: 'Error interno del servidor' });
     } 
 
     return res.status(500).json({ error: 'Error interno del servidor'});
@@ -23,3 +23,7 @@ export async function register(req, res) {
 
   return res.status(201).json({ message: 'Producto registrado correctamente' });
 };
+
+export async function getCategories(req, res) {
+  return res.status(200).json({ categories:  getCategoriesProduct()});
+}
