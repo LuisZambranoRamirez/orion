@@ -6,7 +6,7 @@ CREATE TABLE product (
     name VARCHAR(50) NOT NULL UNIQUE,
     price DECIMAL(10,2) NOT NULL,
     stock INT UNSIGNED NOT NULL,
-    barCode VARCHAR(13) NOT NULL UNIQUE,
+    barCode VARCHAR(13) UNIQUE,
     category ENUM('Bebidas', 'Abarrotes/Secos', 'Café/Infusiones', 'Lácteos', 'Carnes', 'Snacks/Golosinas', 'Higiene/Cuidado Personal', 'Limpieza/hogar', 'Bebés/Mamá', 'Mascotas','otros') NOT NULL,
     registrarionDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     
