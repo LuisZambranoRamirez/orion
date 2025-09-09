@@ -18,7 +18,7 @@ export async function register(req, res) {
       console.log('Error en la base de datos:');
     } 
 
-    return res.status(500).json({ error: 'Error interno del servidor'});
+    return res.status(500).json({ error: 'Error interno del sersvidor'});
   }
 
   return res.status(201).json({ message: 'Producto registrado correctamente' });

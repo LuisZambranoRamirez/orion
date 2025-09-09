@@ -50,7 +50,9 @@ const productSchemaBusinessRules = z.object({
   .refine((val) => val <= 99999999, {message: "El stock es demasiado grande"}),
 
   barCode: z
-  .string().length(13,{message: "El código de barras debe tener exactamente 13 caracteres"}),
+  .string()
+  .length(13,{message: "El código de barras debe tener exactamente 13 caracteres"})
+  .regex(/^\d+$/, { message: "El código de barras solo debe contener números" }),
 
   category: z
   .enum(categories,{
