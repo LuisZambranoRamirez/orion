@@ -1,7 +1,7 @@
 import express from 'express';
 // MIDDLEWARES
 import { corsMiddleware } from './middlewares/cors.js';
-import { httpMonitorMiddleware } from './middlewares/httpLogger.js';
+import { httpMonitorMiddleware, errorHandlingMiddleware } from './middlewares/httpLogger.js';
 // ROUTES
 import { productRouters } from './routes/product.js';
 
@@ -13,6 +13,7 @@ app.disable('x-powered-by');
 app.use(corsMiddleware);
 
 app.get('/',(req, res) => {
+  throw new Error('Error de prueba');
   res.send('Hola mundo!!!!')
 });
 
@@ -22,6 +23,4 @@ app.use((req, res) =>{
   res.status(404).send('404 not found');
 });
 
-app.use((err, req, res, next) => {
-  console.error('Error atrapado por middleware:', err);
-});
+app.use(errorHandlingMiddleware);
