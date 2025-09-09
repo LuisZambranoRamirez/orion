@@ -72,9 +72,18 @@ CREATE TABLE saleDetail (
         ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET = utf8mb4;
 
+-- Tabla para errores de API
+CREATE TABLE apiError (
+  apiErrorId      INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  typeError         VARCHAR(100) NOT NULL,
+  errorMessage     TEXT NOT NULL,
+  stackTrace       TEXT NULL,
+  registrationDate DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- Tabla para logs de conexión / performance
-CREATE TABLE connectionLogs (
-  connectionLogId  CHAR(36) PRIMARY KEY,
+CREATE TABLE connectionLog (
+  connectionLogId  INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   ipAddress         VARCHAR(45) NOT NULL,
   httpMethod        ENUM('GET','POST','PUT','DELETE','PATCH') NOT NULL,
   endpoint           VARCHAR(255) NOT NULL,
@@ -84,25 +93,17 @@ CREATE TABLE connectionLogs (
   requestBody            JSON DEFAULT NULL,
   responseBody           JSON DEFAULT NULL,
   registrationDate  DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+  apiErrorId      INT UNSIGNED NULL UNIQUE,
+
+    CONSTRAINT fk_apiErrorId_connectionLog FOREIGN KEY (apiErrorId)
+    REFERENCES apiError(apiErrorId)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
   
   CONSTRAINT chck_status_code_limit_is_599 CHECK (statusCode <= 599)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Tabla para errores de API
-CREATE TABLE apiErrors (
-  apiErrorId      INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  typeError         VARCHAR(100) NOT NULL,
-  errorMessage     TEXT NOT NULL,
-  stackTrace       TEXT NULL,
-  registrationDate DATETIME DEFAULT CURRENT_TIMESTAMP,
-
-  connectionLogId CHAR(36) NULL UNIQUE,
-
-    CONSTRAINT fk_connectionLogId_apiErrors FOREIGN KEY (connectionLogId)
-    REFERENCES connectionLogs(connectionLogId)
-    ON DELETE SET NULL
-    ON UPDATE CASCADE
-
+  
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- INDEX extra si buscas por fecha o producto frecuentemente

@@ -13,7 +13,6 @@ app.disable('x-powered-by');
 app.use(corsMiddleware);
 
 app.get('/',(req, res) => {
-  throw new Error('Error de prueba');
   res.send('Hola mundo!!!!')
 });
 
