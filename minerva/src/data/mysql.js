@@ -4,8 +4,8 @@ const config = {
   host:'localhost',
   port: 3306,
   database: 'apolo',
-  user: '',
-  password: '',
+  user: process.env.USER_DB,
+  password: process.env.PASSWORD_DB,
 
   //Si todas las conexiones estan en uso, las solicitudes adicionales se quedaran en cola
   waitForConnections: true,

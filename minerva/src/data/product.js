@@ -4,16 +4,16 @@ import { DataBaseError } from '../errors/dataBaseError.js';
 export async function registerProductDB(name, price, stock, barCode, category) {
   try {
 
-    const result = await connection.query(
+    await connection.query(
       'INSERT INTO product (name, price, stock, barCode, category) VALUES (?, ?, ?, ?, ?)',
       [name, price, stock, barCode, category]
     );
 
-    return result.affectedRows > 0;
-
   } catch (error) {
     throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
   }
+
+  return await isProductNameExistsDB(name);
 }
 
 export async function updateProductFieldDB(productoId, field, value) {
@@ -59,10 +59,10 @@ export async function isProductBarCodeExistsDB(barCode) {
 }
 
 export async function isProductNameExistsDB(name) {
-  const [result] = await connection.query(
-    'SELECT name FROM product WHERE name = ?',
-    [name]
-  );
-
-  return result.length > 0 && result[0].name === name;
+  try {
+    const [result] = await connection.query('SELECT name FROM product WHERE name = ?', [name]);
+    return result.length > 0 && result[0].name === name;
+  } catch (error) {
+    throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
+  }
 }

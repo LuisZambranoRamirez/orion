@@ -21,3 +21,7 @@ app.use('/product', productRouters);
 app.use((req, res) =>{
   res.status(404).send('404 not found');
 });
+
+app.use((err, req, res, next) => {
+  console.error('Error atrapado por middleware:', err);
+});

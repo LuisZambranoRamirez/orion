@@ -4,10 +4,11 @@
  */
 export function httpMonitorMiddleware(req, res, next) {
   const inicio = performance.now();
+  const url = req.url;
 
   res.on('finish', () => {
     console.log(
-      `${req.method} ${req.url} ${res.statusCode} - ${(performance.now() - inicio).toFixed(3)} ms - ${res.get("Content-Length") || 0} Bytes`
+      `${req.method} ${url} ${res.statusCode} - ${(performance.now() - inicio).toFixed(3)} ms - ${res.get("Content-Length") || 0} Bytes`
     );
   });
   next();

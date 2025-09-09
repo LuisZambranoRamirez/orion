@@ -6,16 +6,16 @@ export async function register(req, res) {
   const result = validateProductSchema(req.body);
 
   if (!result.success) {
-    return res.status(422).json({ error: result.error.message });
+    return res.status(422).json({ error: JSON.parse(result.error)[0].message });
   }
 
   try {
     await registerProduct(result.data)
   } catch (error) {
     if (error.name === 'BusinessError') {
-      return res.status(422).json({ error: error.message });
+      return res.status(422).json({ error: JSON.parse(error.message)[0].message });
     } else if (error.name === 'DataBaseError') {
-      return res.status(500).json({ error: 'Error interno del servidor' });
+      console.log('Error en la base de datos:');
     } 
 
     return res.status(500).json({ error: 'Error interno del servidor'});
