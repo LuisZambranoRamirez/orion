@@ -96,6 +96,8 @@ CREATE TABLE connectionLogs (
   
   apiErrorId       INT UNSIGNED NULL,
 
+  CONSTRAINT chck_status_code_limit_is_599 CHECK (statusCode <= 599)
+
   CONSTRAINT fk_apiError FOREIGN KEY (apiErrorId)
     REFERENCES apiErrors(apiErrorId)
     ON DELETE SET NULL
