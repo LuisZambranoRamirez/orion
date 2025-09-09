@@ -72,8 +72,8 @@ async function registerLogInDB(ipAddress, httpMethod, endpoint, statusCode, resp
       statusCode,         // statusCode
       responseTimeMs,         // responseTimeMs
       responseSizeBytes,      // responseSizeBytes
-      JSON.stringify(responseBody),// responseBody
-      JSON.stringify(requestBody),// requestBody 
+      JSON.stringify(responseBody || {}),// responseBody
+      JSON.stringify(requestBody || {}),// requestBody 
       apiErrorId // apiErrorId (puede ser null)
     ]
   );

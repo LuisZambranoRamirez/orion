@@ -8,7 +8,7 @@ export async function registerProduct(result) {
     const resultBusinessRules = validateProductSchemaBusinessRules(result);
 
     if (!resultBusinessRules.success) {
-        throw new BusinessError(resultBusinessRules.error.message);
+        throw new BusinessError(JSON.parse(resultBusinessRules.message)[0].message);
     }
 
     const { name, price, stock, barCode, category } = resultBusinessRules.data;  

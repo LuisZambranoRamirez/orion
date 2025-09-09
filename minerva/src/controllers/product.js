@@ -13,7 +13,7 @@ export async function register(req, res) {
     await registerProduct(result.data)
   } catch (error) {
     if (error.name === 'BusinessError') {
-      return res.status(422).json({ error: JSON.parse(error.message)[0].message });
+      return res.status(422).json({ error: error.message });
     } else if (error.name === 'DataBaseError') {
       console.log('Error en la base de datos:');
     } 
