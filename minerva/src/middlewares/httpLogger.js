@@ -8,14 +8,14 @@ export function httpMonitorMiddleware(req, res, next) {
   const inicio = performance.now();
   const endpoint = req.url;
   const ipAddress = req.ip;
+  const requestBody = req.body;
 
   res.on('finish', async () => {
     const httpMethod = req.method;
     const statusCode = res.statusCode;
     const responseTimeMs = (performance.now() - inicio).toFixed(3);
-    const responseSizeBytes = res.get("Content-Length") || 0;
-    const requestBody = req.body;
-    const responseBody = res.body || {};
+    const responseSizeBytes = res.get("Content-Length");
+    const responseBody = res.sendData || {}; // Asumiendo que el body de la respuesta se guarda en res.sendData
     const apiErrorId = res.locals.apiErrorId || null;
 
     console.log(
@@ -29,7 +29,7 @@ export function httpMonitorMiddleware(req, res, next) {
     );
     
     try {
-      await registerLogInDB(ipAddress, httpMethod, endpoint, statusCode, responseTimeMs, responseSizeBytes, requestBody, responseBody, apiErrorId);
+      await registerLogInDB(ipAddress, httpMethod, endpoint, statusCode, responseTimeMs, responseSizeBytes, responseBody, requestBody, apiErrorId);
     } catch (error) {
       console.log(error);
       console.log('No se pudo registrar el log en la base de datos atentamente el middleware de registro de logs');
@@ -72,8 +72,8 @@ async function registerLogInDB(ipAddress, httpMethod, endpoint, statusCode, resp
       statusCode,         // statusCode
       responseTimeMs,         // responseTimeMs
       responseSizeBytes,      // responseSizeBytes
-      JSON.stringify(responseBody || {}),// responseBody
-      JSON.stringify(requestBody || {}),// requestBody 
+      JSON.stringify(responseBody),// responseBody
+      JSON.stringify(requestBody),// requestBody 
       apiErrorId // apiErrorId (puede ser null)
     ]
   );

@@ -7,13 +7,13 @@ import { productRouters } from './routes/product.js';
 
 export const app = express();
 
-app.use(httpMonitorMiddleware)
-app.use(express.json());
-app.disable('x-powered-by');
 app.use(corsMiddleware);
+app.disable('x-powered-by');
+app.use(express.json());
+app.use(httpMonitorMiddleware)
 
 app.get('/',(req, res) => {
-  res.send('Hola mundo!!!!')
+  res.send('Drako el mas cerdin cerdon')
 });
 
 app.use('/product', productRouters);
@@ -22,4 +22,4 @@ app.use((req, res) =>{
   res.status(404).send('404 not found');
 });
 
-app.use(errorHandlingMiddleware);
+//app.use(errorHandlingMiddleware);

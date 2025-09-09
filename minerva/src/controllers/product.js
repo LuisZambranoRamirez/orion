@@ -16,8 +16,9 @@ export async function register(req, res) {
       return res.status(422).json({ error: error.message });
     } else if (error.name === 'DataBaseError') {
       console.log('Error en la base de datos:');
-    } 
-
+    }
+    // PARA DEBUGUEAR 
+    console.log(error);
     return res.status(500).json({ error: 'Error interno del sersvidor'});
   }
 

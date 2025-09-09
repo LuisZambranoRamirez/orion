@@ -1,5 +1,8 @@
 const acceptedOrigins = [
-  'http://localhost:8080'
+  'http://localhost:8080',
+  '192.168.1.20',
+  '192.168.1.6',
+'192.168.1.9'
 ];
 
 export function corsMiddleware(req, res, next) {

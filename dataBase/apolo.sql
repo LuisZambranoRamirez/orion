@@ -90,8 +90,8 @@ CREATE TABLE connectionLog (
   statusCode        INT UNSIGNED NOT NULL,
   responseTimeMs   INT UNSIGNED,
   responseSizeBytes INT UNSIGNED,
-  requestBody            TEXT DEFAULT NULL,
-  responseBody           TEXT DEFAULT NULL,
+  requestBody            JSON DEFAULT NULL,
+  responseBody           JSON DEFAULT NULL,
   registrationDate  DATETIME DEFAULT CURRENT_TIMESTAMP,
 
   apiErrorId      INT UNSIGNED NULL UNIQUE,
