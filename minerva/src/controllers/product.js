@@ -1,4 +1,4 @@
-import {registerProduct, getCategoriesProduct} from '../services/product.js';
+import {registerProduct, getCategoriesProduct, getAllProducts} from '../services/product.js';
 import {validateProductSchema} from '../schemas/product.js';
 
 export async function register(req, res) {
@@ -24,6 +24,10 @@ export async function register(req, res) {
 
   return res.status(201).json({ message: 'Producto registrado correctamente' });
 };
+
+export async function getAll(req, res) {
+  return res.status(200).json({ products: await getAllProducts()});
+}
 
 export async function getCategories(req, res) {
   return res.status(200).json({ categories:  getCategoriesProduct()});

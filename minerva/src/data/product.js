@@ -49,13 +49,21 @@ export async function getProductDB(fieldId, valueId, columnsToConsult) {
     return result[0];
 }
 
-export async function isProductBarCodeExistsDB(barCode) {
-  const [result] = await connection.query(
-    'SELECT barCode FROM product WHERE barCode = ?',
-    [barCode]
-  );
+export async function getAllProductsDB() {
+  try {
+    return await connection.query('SELECT name, price, stock, category, barCode, registrarionDate FROM product');
+  } catch (error) {
+    throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
+  }
+}
 
-  return result.length > 0 && result[0].barCode === barCode;
+export async function isProductBarCodeExistsDB(barCode) {
+  try {
+    const [result] = await connection.query('SELECT barCode FROM product WHERE barCode = ?', [barCode]);
+    return result.length > 0 && result[0].barCode === barCode;
+  } catch (error) {
+    throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
+  }
 }
 
 export async function isProductNameExistsDB(name) {

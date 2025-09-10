@@ -1,4 +1,4 @@
-import {registerProductDB, isProductBarCodeExistsDB, isProductNameExistsDB} from '../data/product.js';
+import {registerProductDB, isProductBarCodeExistsDB, isProductNameExistsDB, getAllProductsDB} from '../data/product.js';
 import { BusinessError } from '../errors/businessError.js';
 import { validateProductSchemaBusinessRules } from '../schemas/product.js';
 import { categories } from '../schemas/enums.js';
@@ -26,6 +26,10 @@ export async function registerProduct(result) {
 
 export async function updateProductField(productoId, field, value) {
     
+}
+
+export async function getAllProducts() {
+    return await getAllProductsDB();
 }
 
 export function getCategoriesProduct() {
