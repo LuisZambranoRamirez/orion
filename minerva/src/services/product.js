@@ -5,7 +5,7 @@ import { categories } from '../schemas/enums.js';
 
 export async function registerProduct(result) {
     // Reglas de negocio
-    const resultBusinessRules = validateProductSchemaBusinessRules(result);
+    const resultBusinessRules = await validateProductSchemaBusinessRules(result);
 
     if (!resultBusinessRules.success) {
         throw new BusinessError(JSON.parse(resultBusinessRules.error)[0].message);

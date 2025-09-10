@@ -2,11 +2,11 @@ import {z} from 'zod';
 import { categories } from './enums.js';
 
 export function validateProductSchema(object) {
-  return productSchema.safeParse(object);
+  return productSchema.safeParseAsync(object);
 }
 
 export function validateProductSchemaBusinessRules(object) {
-  return productSchemaBusinessRules.safeParse(object);
+  return productSchemaBusinessRules.safeParseAsync(object);
 }
 
 const productSchema = z.object({

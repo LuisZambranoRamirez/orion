@@ -3,7 +3,7 @@ import {validateProductSchema} from '../schemas/product.js';
 
 export async function register(req, res) {
   // Reglas tecnicas
-  const result = validateProductSchema(req.body);
+  const result = await validateProductSchema(req.body);
 
   if (!result.success) {
     return res.status(422).json({ error: JSON.parse(result.error)[0].message });
