@@ -39,20 +39,6 @@ export function httpMonitorMiddleware(req, res, next) {
   next();
 }
 
-export async function errorHandlingMiddleware(err, req, res, next) {
-  if (!err) return next(); // No hay error, pasamos al siguiente middleware
-
-  try {
-    res.locals.apiErrorId = await registerErrorInDB(err.name, err.message, err.stack);
-  } catch (dbErr) {
-    console.log(dbErr);
-    console.log('No se pudo registrar el error en la base de datos atentamente el middleware de registro de errores');
-    console.log('Si llegaste hasta aqui, que DRAKO se apiade de nuestras almas');
-  }
-
-  return res.status(500).json({ error: "Error interno del servidor" });
-}
-
 async function registerErrorInDB(typeError, errorMessage, stackTrace) {
   const [result] =  await connection.query(
     'INSERT INTO apiError (typeError, errorMessage, stackTrace) VALUES (?, ?, ?)',
