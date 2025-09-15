@@ -45,6 +45,7 @@ Table product {
   productId int [pk, increment]
   name varchar(50) [not null, unique]
   price decimal(10,2) [not null]
+  gainAmount decimal(10,2) [not null]
   stock int [not null]
   barCode varchar(13) [unique]
   saleMode SaleMode [not null]

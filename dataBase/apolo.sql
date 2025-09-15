@@ -5,6 +5,7 @@ CREATE TABLE product (
     productId INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE,
     price DECIMAL(10,2) NOT NULL,
+    gainAmount DECIMAL(10,2) NOT NULL,
     stock INT UNSIGNED NOT NULL,
     barCode VARCHAR(13) UNIQUE,
     saleMode ENUM('Unidad', 'Granel', 'Unidad/Granel') NOT NULL,
@@ -12,7 +13,8 @@ CREATE TABLE product (
     registrarionDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     
     CONSTRAINT chk_product_price CHECK (price > 0),
-    CONSTRAINT chk_product_barcode_length CHECK (CHAR_LENGTH(barCode) = 13)
+    CONSTRAINT chk_product_barcode_length CHECK (CHAR_LENGTH(barCode) = 13),
+    CONSTRAINT chk_gain_amount_non_negative CHECK (gainAmount > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE productPriceHistory (
