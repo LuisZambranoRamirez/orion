@@ -7,6 +7,7 @@ CREATE TABLE product (
     price DECIMAL(10,2) NOT NULL,
     stock INT UNSIGNED NOT NULL,
     barCode VARCHAR(13) UNIQUE,
+    saleMode ENUM('Unidad', 'Granel', 'Unidad/Granel') NOT NULL,
     category ENUM('Bebidas', 'Abarrotes/Secos', 'Café/Infusiones', 'Lácteos', 'Carnes', 'Snacks/Golosinas', 'Higiene/Cuidado Personal', 'Limpieza/hogar', 'Bebés/Mamá', 'Mascotas','otros') NOT NULL,
     registrarionDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     
@@ -31,10 +32,10 @@ CREATE TABLE stockEntry (
     productId INT UNSIGNED NOT NULL,
     supplier VARCHAR(50),
     registrarionDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    price DECIMAL(10,2) NOT NULL,
-    amount INT NOT NULL,
+    priceUnit DECIMAL(10,2) UNSIGNED NOT NULL,
+    amount INT UNSIGNED NOT NULL,
     
-    CONSTRAINT chk_stockEntry_price CHECK (price > 0),
+    CONSTRAINT chk_stockEntry_price CHECK (priceUnit > 0),
     CONSTRAINT chk_stockEntry_amount CHECK (amount > 0),
     
     CONSTRAINT fk_stock_product FOREIGN KEY (productId)
@@ -45,11 +46,13 @@ CREATE TABLE stockEntry (
 
 CREATE TABLE sale (
     saleId INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    customerName VARCHAR(50) NOT NULL,
+    amountPaid DECIMAL(10,2) NOT NULL, 
     total DECIMAL(10,2) NOT NULL,
-    customerName VARCHAR(50),
     registrarionDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     
-    CONSTRAINT chk_sale_total CHECK (total > 0)
+    CONSTRAINT chk_sale_total CHECK (total > 0),
+    CONSTRAINT chk_sale_amountPaid_range CHECK (amountPaid >= 0 AND amountPaid <= total)
 ) ENGINE=InnoDB DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE saleDetail (
@@ -67,6 +70,22 @@ CREATE TABLE saleDetail (
         ON DELETE CASCADE
         ON UPDATE CASCADE,
     CONSTRAINT fk_sd_product FOREIGN KEY (productId)
+        REFERENCES product(productId)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET = utf8mb4;
+
+CREATE TABLE inventoryLoss (
+    inventoryLossId INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    productId INT UNSIGNED NOT NULL,
+    amount INT UNSIGNED NOT NULL,
+    reason ENUM('Daño', 'Vencimiento', 'Robo', 'Otro') NOT NULL,
+    observation VARCHAR(255),
+    registrarionDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT chk_inventoryLoss_amount CHECK (amount > 0),
+
+    CONSTRAINT fk_inventoryLoss_product FOREIGN KEY (productId)
         REFERENCES product(productId)
         ON DELETE CASCADE
         ON UPDATE CASCADE
