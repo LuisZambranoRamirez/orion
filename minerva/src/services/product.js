@@ -36,3 +36,24 @@ export function getCategoriesProduct() {
   return categories;
 }
 
+/**
+ * Buscar productos:
+ * - Si viene barCode: busqueda exacta por codigo
+ * - Si viene name: busqueda parcial por nombre
+ * - Si ambos: prioriza barCode (asumiendo que barCode es más específico)
+ */
+export async function getProductsByFilter({ name, barCode }) {
+  if (barCode) {
+    // busqueda exacta por codigo
+    const product = await getProductByBarCodeDB(barCode);
+    // devolver array para consistencia con getAll
+    return product ? [product] : [];
+  }
+
+  if (name) {
+    return await getProductsByNameDB(name);
+  }
+
+  // si llegara aqui, es error de uso
+  throw new BusinessError('Falta criterio de busqueda (name o barCode)');
+}

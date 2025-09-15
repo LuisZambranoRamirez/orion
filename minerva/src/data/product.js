@@ -1,12 +1,12 @@
 import connection from './mysql.js';
 import { DataBaseError } from '../errors/dataBaseError.js';
 
-export async function registerProductDB(name, price, stock, barCode, category) {
+export async function registerProductDB(name, price, stock, barCode, saleMode, category) {
   try {
 
     await connection.query(
-      'INSERT INTO product (name, price, stock, barCode, category) VALUES (?, ?, ?, ?, ?)',
-      [name, price, stock, barCode, category]
+      'INSERT INTO product (name, price, stock, barCode, saleMode, category) VALUES (?, ?, ?, ?, ?, ?)',
+      [name, price, stock, barCode, saleMode, category]
     );
 
   } catch (error) {
@@ -28,30 +28,42 @@ export async function updateProductFieldDB(productoId, field, value) {
   return true;
 }
 
-export async function getProductDB(fieldId, valueId, columnsToConsult) {
-    const allowedFields = ['name', 'barCode'];
-    const allowColumns = ['productId', 'name', 'price', 'stock', 'category', 'barCode', 'registrarionDate'];
-
-    if(!allowedFields.includes(fieldId)) return null;
-    
-    const uniqueCols = Array.from(new Set(columnsToConsult));
-    
-    for (const col of uniqueCols) {
-        if (!allowColumns.includes(col)) return null;
-    }
-
-    const columnsQuery = uniqueCols.join(', ');
-
-    const [result] = await connection.query(`SELECT ${columnsQuery} FROM product WHERE ${fieldId} = ? LIMIT 1`,
-        [valueId]
+/**
+ * Búsqueda parcial por nombre (LIKE)
+ * devuelve array de productos que coincidan parcialmente con name
+ */
+export async function getProductsByNameDB(name) {
+  try {
+    const pattern = `%${name}%`;
+    const [rows] = await connection.query(
+      'SELECT id, name, price, stock, barCode, category FROM product WHERE name LIKE ?',
+      [pattern]
     );
+    return rows;
+  } catch (error) {
+    throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
+  }
+}
 
-    return result[0];
+/**
+ * Búsqueda exacta por codigo de barras
+ * devuelve un objeto producto o null
+ */
+export async function getProductByBarCodeDB(barCode) {
+  try {
+    const [rows] = await connection.query(
+      'SELECT * FROM product WHERE barCode = ?',
+      [barCode]
+    );
+    return rows.length > 0 ? rows[0] : null;
+  } catch (error) {
+    throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
+  }
 }
 
 export async function getAllProductsDB() {
   try {
-    return await connection.query('SELECT name, price, stock, category, barCode, registrarionDate FROM product');
+    return await connection.query('SELECT * FROM product');
   } catch (error) {
     throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
   }

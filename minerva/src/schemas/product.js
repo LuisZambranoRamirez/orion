@@ -1,9 +1,5 @@
 import {z} from 'zod';
-import { categories } from './enums.js';
-
-export async function validateProductSchema(object) {
-  return productSchema.safeParseAsync(object);
-}
+import { categories, saleModes } from './enums.js';
 
 export async function validateProductSchemaBusinessRules(object) {
   return productSchemaBusinessRules.safeParseAsync(object);
@@ -12,29 +8,6 @@ export async function validateProductSchemaBusinessRules(object) {
 export function validatePartialProductBusinessSchema(object) {
   return productSchemaBusinessRules.partial().safeParseAsync(object);
 }
-
-const productSchema = z.object({
-  name: z.string({
-    invalid_type_error: "El nombre debe ser una cadena de texto",
-    required_error: "El nombre es obligatorio"
-  }),
-  price: z.number({
-    invalid_type_error: "El precio debe ser un número",
-    required_error: "El precio es obligatorio"
-  }),
-  stock: z.number({
-    invalid_type_error: "El stock debe ser un número",
-    required_error: "El stock es obligatorio"
-  }),
-  barCode: z.string({
-    invalid_type_error: "El código de barras debe ser una cadena de texto",
-    required_error: "El código de barras es obligatorio"
-  }),
-  category: z.string({
-    invalid_type_error: "La categoría debe ser una cadena de texto",
-    required_error: "La categoría es obligatoria"
-  })
-});
 
 const productSchemaBusinessRules = z.object({
   name: z
