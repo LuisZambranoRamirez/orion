@@ -1,12 +1,12 @@
 CREATE DATABASE apolo;
 USE apolo;
 
-CREATE TABLE customer {
+CREATE TABLE customer (
     customerNameId VARCHAR(50) PRIMARY KEY,
     phone VARCHAR(9) UNIQUE,
 
     CONSTRAINT chk_customer_phone_length CHECK (CHAR_LENGTH(phone) = 9)
-}
+ ) ENGINE=InnoDB DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE product (
     productId INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -22,25 +22,13 @@ CREATE TABLE product (
     CONSTRAINT chk_gain_amount_non_negative CHECK (gainAmount > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET = utf8mb4;
 
-CREATE TABLE productPriceHistory (
-    productPriceHistoryId INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    productId INT UNSIGNED NOT NULL,
-    price DECIMAL(10,2) NOT NULL,
-    registrarionDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    
-    CONSTRAINT fk_pph_product FOREIGN KEY (productId)
-        REFERENCES product(productId)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET = utf8mb4;
-
 CREATE TABLE stockEntry (
     stockEntryId INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     productId INT UNSIGNED NOT NULL,
     supplier VARCHAR(50),
     registrarionDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    priceUnit DECIMAL(10,2) UNSIGNED NOT NULL,
-    amount INT UNSIGNED NOT NULL,
+    priceUnit DECIMAL(10,2) NOT NULL,
+    amount INT NOT NULL,
     
     CONSTRAINT chk_stockEntry_price CHECK (priceUnit > 0),
     CONSTRAINT chk_stockEntry_amount CHECK (amount > 0),
@@ -54,8 +42,10 @@ CREATE TABLE stockEntry (
 CREATE TABLE sale (
     saleId INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     customerNameId VARCHAR(50) NOT NULL,
-    total DECIMAL(10,2) UNSIGNED NOT NULL,
-    registrarionDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP    
+    total DECIMAL(10,2) NOT NULL,
+    registrarionDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT chk_sale_total CHECK (total >= 0) 
 ) ENGINE=InnoDB DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE saleDetail (
@@ -63,9 +53,11 @@ CREATE TABLE saleDetail (
     saleId INT UNSIGNED NOT NULL,
     productId INT UNSIGNED NOT NULL,
     amount INT NOT NULL,
-    priceUnit DECIMAL(10,2) UNSIGNED NOT NULL,
+    priceUnit DECIMAL(10,2) NOT NULL,
     
     CONSTRAINT chk_saleDetail_amount CHECK (amount > 0),
+    CONSTRAINT chk_saleDetail_priceUnit CHECK (priceUnit > 0),
+
     
     CONSTRAINT fk_sd_sale FOREIGN KEY (saleId)
         REFERENCES sale(saleId)
@@ -131,23 +123,3 @@ CREATE TABLE connectionLog (
 -- CREATE INDEX idx_sale_customerName ON sale(customerName);
 -- CREATE INDEX idx_stockEntry_supplier ON stockEntry(supplier);
 -- CREATE INDEX idx_product_category ON product(category);
-
-
--- TRIGGERS
--- SHOW TRIGGERS
-
-DELIMITER $$
-
--- Guarda el historial de precios de los productos
-CREATE TRIGGER trg_product_after_update
-AFTER UPDATE ON product
-FOR EACH ROW
-BEGIN
-    -- Solo registrar si realmente cambió el precio
-    IF NEW.price <> OLD.price THEN
-        INSERT INTO productPriceHistory (productId, price)
-        VALUES (NEW.productId, NEW.price);
-    END IF;
-END $$
-
-DELIMITER ;

@@ -62,13 +62,6 @@ Table product {
   Note: 'CHECK (gainAmount > 0) and CHAR_LENGTH(barCode) = 13'
 }
 
-Table productPriceHistory {
-  productPriceHistoryId int [pk, increment]
-  productId int [not null, ref: > product.productId]
-  price decimal(10,2) [not null]
-  registrarionDate timestamp [default: `CURRENT_TIMESTAMP`, not null]
-}
-
 Table stockEntry {
   stockEntryId int [pk, increment]
   productId int [not null, ref: > product.productId]
@@ -85,6 +78,8 @@ Table sale {
   customerNameId varchar(50) [not null, ref: > customer.customerNameId]
   total decimal(10,2) [not null]
   registrarionDate timestamp [default: `CURRENT_TIMESTAMP`, not null]
+
+  Note: 'CHECK (total >= 0) '
 }
 
 Table pay {
@@ -103,7 +98,7 @@ Table saleDetail {
   amount int [not null]
   priceUnit decimal(10,2) [not null]
 
-  Note: 'CHECK (amount > 0)'
+  Note: 'CHECK (amount > 0) AND CHECK (priceUnit > 0)'
 }
 
 Table inventoryLoss {
