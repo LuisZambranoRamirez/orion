@@ -1,10 +1,16 @@
 CREATE DATABASE apolo;
 USE apolo;
 
+CREATE TABLE customer {
+    customerNameId VARCHAR(50) PRIMARY KEY,
+    phone VARCHAR(9) UNIQUE,
+
+    CONSTRAINT chk_customer_phone_length CHECK (CHAR_LENGTH(phone) = 9)
+}
+
 CREATE TABLE product (
     productId INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL UNIQUE,
-    price DECIMAL(10,2) NOT NULL,
     gainAmount DECIMAL(10,2) NOT NULL,
     stock INT UNSIGNED NOT NULL,
     barCode VARCHAR(13) UNIQUE,
@@ -12,7 +18,6 @@ CREATE TABLE product (
     category ENUM('Bebidas', 'Abarrotes/Secos', 'Café/Infusiones', 'Lácteos', 'Carnes', 'Snacks/Golosinas', 'Higiene/Cuidado Personal', 'Limpieza/hogar', 'Bebés/Mamá', 'Mascotas','otros') NOT NULL,
     registrarionDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     
-    CONSTRAINT chk_product_price CHECK (price > 0),
     CONSTRAINT chk_product_barcode_length CHECK (CHAR_LENGTH(barCode) = 13),
     CONSTRAINT chk_gain_amount_non_negative CHECK (gainAmount > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET = utf8mb4;
@@ -48,13 +53,9 @@ CREATE TABLE stockEntry (
 
 CREATE TABLE sale (
     saleId INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    customerName VARCHAR(50) NOT NULL,
-    amountPaid DECIMAL(10,2) NOT NULL, 
-    total DECIMAL(10,2) NOT NULL,
-    registrarionDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    
-    CONSTRAINT chk_sale_total CHECK (total > 0),
-    CONSTRAINT chk_sale_amountPaid_range CHECK (amountPaid >= 0 AND amountPaid <= total)
+    customerNameId VARCHAR(50) NOT NULL,
+    total DECIMAL(10,2) UNSIGNED NOT NULL,
+    registrarionDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP    
 ) ENGINE=InnoDB DEFAULT CHARSET = utf8mb4;
 
 CREATE TABLE saleDetail (
@@ -62,10 +63,9 @@ CREATE TABLE saleDetail (
     saleId INT UNSIGNED NOT NULL,
     productId INT UNSIGNED NOT NULL,
     amount INT NOT NULL,
-    priceUnit DECIMAL(10,2) NOT NULL,
+    priceUnit DECIMAL(10,2) UNSIGNED NOT NULL,
     
     CONSTRAINT chk_saleDetail_amount CHECK (amount > 0),
-    CONSTRAINT chk_saleDetail_priceUnit CHECK (priceUnit > 0),
     
     CONSTRAINT fk_sd_sale FOREIGN KEY (saleId)
         REFERENCES sale(saleId)
@@ -81,7 +81,7 @@ CREATE TABLE inventoryLoss (
     inventoryLossId INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     productId INT UNSIGNED NOT NULL,
     amount INT UNSIGNED NOT NULL,
-    reason ENUM('Daño', 'Vencimiento', 'Robo', 'Otro') NOT NULL,
+    reason ENUM('Daño', 'Vencimiento', 'Robo', 'Perdido','Otro') NOT NULL,
     observation VARCHAR(255),
     registrarionDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 

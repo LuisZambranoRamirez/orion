@@ -30,6 +30,7 @@ Enum InventoryLossReason {
   Daño
   Vencimiento
   Robo
+  Perdido
   Otro
 }
 
@@ -41,10 +42,16 @@ Enum HttpMethod {
   PATCH
 }
 
+table customer {
+  customerNameId varchar(50) [pk]
+  phone varchar(9) [unique]
+
+  Note: 'CHECK (CHAR_LENGTH(phone) = 9)'
+}
+
 Table product {
   productId int [pk, increment]
   name varchar(50) [not null, unique]
-  price decimal(10,2) [not null]
   gainAmount decimal(10,2) [not null]
   stock int [not null]
   barCode varchar(13) [unique]
@@ -52,7 +59,7 @@ Table product {
   category ProductCategory [not null]
   registrarionDate timestamp [default: `CURRENT_TIMESTAMP`, not null]
   
-  Note: 'CHECK (price > 0) and CHAR_LENGTH(barCode) = 13'
+  Note: 'CHECK (gainAmount > 0) and CHAR_LENGTH(barCode) = 13'
 }
 
 Table productPriceHistory {
@@ -75,9 +82,15 @@ Table stockEntry {
 
 Table sale {
   saleId int [pk, increment]
-  customerName varchar(50) [not null]
-  amountPaid decimal(10,2) [not null, default: 0]
+  customerNameId varchar(50) [not null, ref: > customer.customerNameId]
   total decimal(10,2) [not null]
+  registrarionDate timestamp [default: `CURRENT_TIMESTAMP`, not null]
+}
+
+Table pay {
+  payId int [pk, increment]
+  saleId int [not null, ref: > sale.saleId]
+  amount decimal(10,2) [not null]
   registrarionDate timestamp [default: `CURRENT_TIMESTAMP`, not null]
 
   Note: 'CHECK (total > 0)'
@@ -90,7 +103,7 @@ Table saleDetail {
   amount int [not null]
   priceUnit decimal(10,2) [not null]
 
-  Note: 'CHECK (amount > 0 AND priceUnit > 0)'
+  Note: 'CHECK (amount > 0)'
 }
 
 Table inventoryLoss {
