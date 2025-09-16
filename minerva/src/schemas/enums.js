@@ -1,2 +1,0 @@
-export const categories = ['Bebidas', 'Abarrotes/Secos', 'Café/Infusiones', 'Lácteos', 'Carnes', 'Snacks/Golosinas', 'Higiene/Cuidado Personal', 'Limpieza/hogar', 'Bebés/Mamá', 'Mascotas','otros'];
-export const saleModes = ['Unidad', 'Granel', 'Unidad/Granel'];
