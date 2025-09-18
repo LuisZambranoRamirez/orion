@@ -1,12 +1,12 @@
 import connection from './mysql.js';
 import { DataBaseError } from '../errors/dataBaseError.js';
 
-export async function registerProductDB(name, price, stock, barCode, saleMode, category) {
+export async function registerProductDB(name, gainAmount, stock, barCode, saleMode, category) {
   try {
 
     await connection.query(
-      'INSERT INTO product (name, price, stock, barCode, saleMode, category) VALUES (?, ?, ?, ?, ?, ?)',
-      [name, price, stock, barCode, saleMode, category]
+      'INSERT INTO product (productNameId, gainAmount, stock, barCode, saleMode, category) VALUES (?, ?, ?, ?, ?, ?)',
+      [name, gainAmount, stock, barCode, saleMode, category]
     );
 
   } catch (error) {
@@ -36,7 +36,7 @@ export async function getProductsByNameDB(name) {
   try {
     const pattern = `%${name}%`;
     const [rows] = await connection.query(
-      'SELECT id, name, price, stock, barCode, category FROM product WHERE name LIKE ?',
+      'SELECT * FROM product WHERE name LIKE ?',
       [pattern]
     );
     return rows;
@@ -80,7 +80,7 @@ export async function isProductBarCodeExistsDB(barCode) {
 
 export async function isProductNameExistsDB(name) {
   try {
-    const [result] = await connection.query('SELECT name FROM product WHERE name = ?', [name]);
+    const [result] = await connection.query('SELECT productNameId FROM product WHERE name = ?', [name]);
     return result.length > 0 && result[0].name === name;
   } catch (error) {
     throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);

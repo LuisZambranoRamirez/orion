@@ -1,27 +1,28 @@
-import {registerProductDB, isProductBarCodeExistsDB, isProductNameExistsDB, getAllProductsDB} from '../data/product.js';
-import { BusinessError } from '../errors/businessError.js';
-import { validateProductSchemaBusinessRules } from '../schemas/product.js';
-import { categories } from '../schemas/enums.js';
+import { registerProductDB, isProductBarCodeExistsDB, isProductNameExistsDB, getAllProductsDB } from '../data/product.js';
+import { validateProductSchemaBusinessRules, validatePartialProductBusinessSchema } from '../schemas/product.js';
+import { categories } from '../schemas/product.js';
+import { Result } from './Result.js'; 
 
-export async function registerProduct(result) {
+
+export async function registerProduct(product) {
     // Reglas de negocio
-    const resultBusinessRules = await validateProductSchemaBusinessRules(result);
+    const resultBusinessRules = await validateProductSchemaBusinessRules(product);
 
     if (!resultBusinessRules.success) {
-        throw new BusinessError(JSON.parse(resultBusinessRules.error)[0].message);
+      return Result.failure(JSON.parse(resultBusinessRules.error)[0].message);
     }
 
-    const { name, price, stock, barCode, category } = resultBusinessRules.data;  
+    const { name, gainAmount, stock, barCode, saleMode, category } = resultBusinessRules.data;  
 
     if(await isProductNameExistsDB(name)) {
-        throw new BusinessError(`El prodcuto -- ${name} -- ya esta registrado`);
+      return Result.failure(`El prodcuto -- ${name} -- ya esta registrado`);
     }
 
     if(await isProductBarCodeExistsDB(barCode)) {
-        throw new BusinessError(`El codigo de barras -- ${barCode} -- ya esta registrado`);
+      return Result.failure(`El codigo de barras -- ${barCode} -- ya esta registrado`);
     }
-    
-    return await registerProductDB(name, price, stock, barCode, category);
+    await registerProductDB(name, gainAmount, stock, barCode, saleMode, category);
+    return Result.success();
 } 
 
 export async function updateProductField(productoId, field, value) {
@@ -29,7 +30,7 @@ export async function updateProductField(productoId, field, value) {
 }
 
 export async function getAllProducts() {
-    return await getAllProductsDB();
+  return await getAllProductsDB();
 }
 
 export function getCategoriesProduct() {
@@ -42,7 +43,15 @@ export function getCategoriesProduct() {
  * - Si viene name: busqueda parcial por nombre
  * - Si ambos: prioriza barCode (asumiendo que barCode es más específico)
  */
-export async function getProductsByFilter({ name, barCode }) {
+export async function getProductsByFilter(result) {
+  const resultBusinessRules = await validatePartialProductBusinessSchema(result);
+
+  if (!resultBusinessRules.success) {
+    throw new BusinessError(JSON.parse(resultBusinessRules.error)[0].message);
+  }
+
+  const { name, barCode } = resultBusinessRules.data;
+  
   if (barCode) {
     // busqueda exacta por codigo
     const product = await getProductByBarCodeDB(barCode);

@@ -1,8 +1,9 @@
 import {registerProduct, getCategoriesProduct, getAllProducts} from '../services/product.js';
 
 export async function register(req, res) {
+  // Aqui debe ir reglas tecnicas cuando las haya
   try {
-    await registerProduct(result.data)
+    await registerProduct(req.body);
   } catch (error) {
     if (error.name === 'BusinessError') {
       return res.status(422).json({ error: error.message });

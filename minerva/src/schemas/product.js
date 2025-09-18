@@ -9,7 +9,7 @@ export function validatePartialProductBusinessSchema(object) {
 }
 
 
-const categories = ['Bebidas', 'Abarrotes/Secos', 'Café/Infusiones', 'Lácteos', 'Carnes', 'Snacks/Golosinas', 'Higiene/Cuidado Personal', 'Limpieza/hogar', 'Bebés/Mamá', 'Mascotas','otros'];
+export const categories = ['Bebidas', 'Abarrotes/Secos', 'Café/Infusiones', 'Lácteos', 'Carnes', 'Snacks/Golosinas', 'Higiene/Cuidado Personal', 'Limpieza/hogar', 'Bebés/Mamá', 'Mascotas','otros'];
 const saleModes = ['Unidad', 'Granel', 'Unidad/Granel'];
 
 const productSchemaBusinessRules = z.object({
@@ -22,12 +22,6 @@ const productSchemaBusinessRules = z.object({
   .number()
   .positive({message: "El monto de ganancia debe ser mayor a 0"})
   .max(99999999.99, {message: "El monto de ganancia es demasiado grande"}),
-
-  stock: z
-  .number()
-  .int({message: "El stock debe ser un número entero"})
-  .nonnegative({message: "El stock debe ser mayor o igual a 0"})
-  .max(4294967295, {message: "El stock es demasiado grande"}),
 
   barCode: z
   .string()

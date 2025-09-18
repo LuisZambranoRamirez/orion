@@ -4,6 +4,7 @@ import { corsMiddleware } from './middlewares/cors.js';
 import { httpMonitorMiddleware } from './middlewares/httpLogger.js';
 // ROUTES
 import { productRouters } from './routes/product.js';
+import { supplierRouters } from './routes/supplier.js';
 
 export const app = express();
 
@@ -17,6 +18,7 @@ app.get('/',(req, res) => {
 });
 
 app.use('/product', productRouters);
+app.use('/supplier', supplierRouters);
 
 app.use((req, res) =>{
   res.status(404).send('404 not found');
