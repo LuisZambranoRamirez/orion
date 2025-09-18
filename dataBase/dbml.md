@@ -69,7 +69,7 @@ Table product {
   productNameId varchar(50) [pk]
   gainAmount decimal(10,2) [not null]
   stock int [not null]
-  reorderLevel int [not null]
+  reorderLevel int
   barCode varchar(13) [unique]
   saleMode SaleMode [not null]
   category ProductCategory [not null]

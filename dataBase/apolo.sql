@@ -27,7 +27,7 @@ CREATE TABLE product (
     productNameId VARCHAR(50) PRIMARY KEY,
     gainAmount DECIMAL(10,2) NOT NULL,
     stock INT UNSIGNED NOT NULL,
-    reorderLevel INT UNSIGNED NOT NULL,
+    reorderLevel INT UNSIGNED,
     barCode VARCHAR(13) UNIQUE,
     saleMode ENUM('Unidad', 'Granel', 'Unidad/Granel') NOT NULL,
     category ENUM('Bebidas', 'Abarrotes/Secos', 'Café/Infusiones', 'Lácteos', 'Carnes', 'Snacks/Golosinas', 'Higiene/Cuidado Personal', 'Limpieza/hogar', 'Bebés/Mamá', 'Mascotas','otros') NOT NULL,
