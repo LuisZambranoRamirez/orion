@@ -31,6 +31,7 @@ Enum InventoryLossReason {
   Vencimiento
   Robo
   Perdido
+  Comsumo
   Otro
 }
 
@@ -42,6 +43,20 @@ Enum HttpMethod {
   PATCH
 }
 
+table productoGainAmountHistory {
+  productoGainAmountHistoryId int [pk, increment]
+  productNameId varchar(50) [not null, ref: > product.productNameId]
+  gainAmount decimal(10,2) [not null]
+  registrarionDate timestamp [default: `CURRENT_TIMESTAMP`, not null]
+}
+
+table supplier {
+  supplierNameId varchar(50) [pk]
+  phone varchar(9)
+
+  Note: 'CHECK (CHAR_LENGTH(phone) = 9)'
+}
+
 table customer {
   customerNameId varchar(50) [pk]
   phone varchar(9) [unique]
@@ -50,8 +65,7 @@ table customer {
 }
 
 Table product {
-  productId int [pk, increment]
-  name varchar(50) [not null, unique]
+  productNameId varchar(50) [pk]
   gainAmount decimal(10,2) [not null]
   stock int [not null]
   barCode varchar(13) [unique]
@@ -64,8 +78,8 @@ Table product {
 
 Table stockEntry {
   stockEntryId int [pk, increment]
-  productId int [not null, ref: > product.productId]
-  supplier varchar(50)
+  productNameId varchar(50) [not null, ref: > product.productNameId]
+  supplierNameId varchar(50) [not null, ref: > supplier.supplierNameId] 
   registrarionDate timestamp [default: `CURRENT_TIMESTAMP`, not null]
   priceUnit decimal(10,2) [not null]
   amount int [not null]
@@ -94,7 +108,7 @@ Table pay {
 Table saleDetail {
   saleDetailId int [pk, increment]
   saleId int [not null, ref: > sale.saleId]
-  productId int [not null, ref: > product.productId]
+  productNameId varchar(50) [not null, ref: > product.productNameId]
   amount int [not null]
   priceUnit decimal(10,2) [not null]
 
@@ -103,7 +117,7 @@ Table saleDetail {
 
 Table inventoryLoss {
   inventoryLossId int [pk, increment]
-  productId int [not null, ref: > product.productId]
+  productNameId varchar(50) [not null, ref: > product.productNameId]
   amount int [not null]
   reason InventoryLossReason [not null]
   observation varchar(255)
