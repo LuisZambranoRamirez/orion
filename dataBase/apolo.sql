@@ -3,11 +3,15 @@ USE apolo;
 
 CREATE TABLE supplier (
     supplierNameId VARCHAR(50) PRIMARY KEY,
+    ruc varchar(11) unique,
     phone VARCHAR(9),
     
     CONSTRAINT chk_supplier_phone_format CHECK (
         CHAR_LENGTH(phone) = 9 AND phone REGEXP '^[0-9]{9}$'
     ) 
+    CONSTRAINT chk_ruc CHECK(
+        CHAR_LENGTH(ruc) = 11 AND ruc REGEXP '^[0-9]{11}$'
+    )
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE customer (

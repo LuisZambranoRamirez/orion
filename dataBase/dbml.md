@@ -52,9 +52,10 @@ table productoGainAmountHistory {
 
 table supplier {
   supplierNameId varchar(50) [pk]
+  ruc varchar(11) unique
   phone varchar(9)
 
-  Note: 'CHECK (CHAR_LENGTH(phone) = 9)'
+  Note: 'CHECK (CHAR_LENGTH(phone) = 9) AND CHECK (CHAR_LENGTH(ruc) = 11)'
 }
 
 table customer {
