@@ -23,6 +23,12 @@ const productSchemaBusinessRules = z.object({
   .positive({message: "El monto de ganancia debe ser mayor a 0"})
   .max(99999999.99, {message: "El monto de ganancia es demasiado grande"}),
 
+  reorderLevel: z
+  .int()
+  .min(0 , "El nivel minimo para la alerta del stock debe ser mayor a cero")
+  .max(4294967295 , "El nivel maximo para la alerta del stock debe ser menor a 4 294 967 295")
+  .optional(),
+
   barCode: z
   .string()
   .length(13,{message: "El código de barras debe tener exactamente 13 caracteres"})

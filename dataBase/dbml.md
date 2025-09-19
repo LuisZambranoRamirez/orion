@@ -147,7 +147,6 @@ Table connectionLog {
   requestBody json
   responseBody json
   registrationDate datetime [default: `CURRENT_TIMESTAMP`]
-  apiErrorId int [unique, ref: > apiError.apiErrorId]
 
   Note: 'CHECK (statusCode <= 599)'
 }

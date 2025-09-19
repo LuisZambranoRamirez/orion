@@ -37,7 +37,7 @@ CREATE TABLE product (
     CONSTRAINT chk_gain_amount_non_negative CHECK (gainAmount > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE productoGainAmountHistory (
+CREATE TABLE productGainAmountHistory (
   productoGainAmountHistoryId INT AUTO_INCREMENT PRIMARY KEY,
   productNameId VARCHAR(50) NOT NULL,
   gainAmount DECIMAL(10,2) NOT NULL,
@@ -152,13 +152,6 @@ CREATE TABLE connectionLog (
   requestBody            JSON DEFAULT NULL,
   responseBody           JSON DEFAULT NULL,
   registrationDate  DATETIME DEFAULT CURRENT_TIMESTAMP,
-
-  apiErrorId      INT UNSIGNED NULL UNIQUE,
-
-    CONSTRAINT fk_apiErrorId_connectionLog FOREIGN KEY (apiErrorId)
-    REFERENCES apiError(apiErrorId)
-    ON DELETE SET NULL
-    ON UPDATE CASCADE,
   
   CONSTRAINT chck_status_code_limit_is_599 CHECK (statusCode <= 599)
 

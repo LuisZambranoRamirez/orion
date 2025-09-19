@@ -1,17 +1,17 @@
 import {registerProduct, getCategoriesProduct, getAllProducts} from '../services/product.js';
+import {registerLogError} from '../services/log.js'
 
 export async function register(req, res) {
   // Aqui debe ir reglas tecnicas cuando las haya
   try {
-    await registerProduct(req.body);
-  } catch (error) {
-    if (error.name === 'BusinessError') {
-      return res.status(422).json({ error: error.message });
-    } else if (error.name === 'DataBaseError') {
-      console.log('Error en la base de datos:');
+    const result = await registerProduct(req.body);
+
+    if (!result.isSuccess) {
+      return res.status(422).json({ error: result.error });
     }
-    // PARA DEBUGUEAR 
-    console.log(error);
+    
+  } catch (error) {
+    registerLogError(req, res, error);
     return res.status(500).json({ error: 'Error interno del sersvidor'});
   }
 

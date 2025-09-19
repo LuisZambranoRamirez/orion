@@ -80,8 +80,8 @@ export async function isProductBarCodeExistsDB(barCode) {
 
 export async function isProductNameExistsDB(name) {
   try {
-    const [result] = await connection.query('SELECT productNameId FROM product WHERE name = ?', [name]);
-    return result.length > 0 && result[0].name === name;
+    const [result] = await connection.query('SELECT productNameId FROM product WHERE productNameId = ?', [name]);
+    return result.length > 0 && result[0].productNameId === name;
   } catch (error) {
     throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
   }

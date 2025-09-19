@@ -1,18 +1,17 @@
 import { registerProductDB, isProductBarCodeExistsDB, isProductNameExistsDB, getAllProductsDB } from '../data/product.js';
-import { validateProductSchemaBusinessRules, validatePartialProductBusinessSchema } from '../schemas/product.js';
-import { categories } from '../schemas/product.js';
+import { validateProductSchemaBusinessRules, validatePartialProductBusinessSchema, categories } from '../schemas/product.js';
 import { Result } from './Result.js'; 
 
 
 export async function registerProduct(product) {
     // Reglas de negocio
-    const resultBusinessRules = await validateProductSchemaBusinessRules(product);
+    const result = await validateProductSchemaBusinessRules(product);
 
-    if (!resultBusinessRules.success) {
-      return Result.failure(JSON.parse(resultBusinessRules.error)[0].message);
+    if (!result.success) {
+      return Result.failure(JSON.parse(result.error)[0].message);
     }
 
-    const { name, gainAmount, stock, barCode, saleMode, category } = resultBusinessRules.data;  
+    const { name, gainAmount, stock, barCode, saleMode, category } = result.data;  
 
     if(await isProductNameExistsDB(name)) {
       return Result.failure(`El prodcuto -- ${name} -- ya esta registrado`);
@@ -21,8 +20,9 @@ export async function registerProduct(product) {
     if(await isProductBarCodeExistsDB(barCode)) {
       return Result.failure(`El codigo de barras -- ${barCode} -- ya esta registrado`);
     }
-    await registerProductDB(name, gainAmount, stock, barCode, saleMode, category);
-    return Result.success();
+
+    await registerProductDB(name, gainAmount, 0, barCode, saleMode, category);
+    return Result.success('');
 } 
 
 export async function updateProductField(productoId, field, value) {
@@ -43,14 +43,14 @@ export function getCategoriesProduct() {
  * - Si viene name: busqueda parcial por nombre
  * - Si ambos: prioriza barCode (asumiendo que barCode es más específico)
  */
-export async function getProductsByFilter(result) {
-  const resultBusinessRules = await validatePartialProductBusinessSchema(result);
+export async function getProductsByFilter() {
+  const result = await validatePartialProductBusinessSchema(result);
 
-  if (!resultBusinessRules.success) {
-    throw new BusinessError(JSON.parse(resultBusinessRules.error)[0].message);
+  if (!result.success) {
+    throw new BusinessError(JSON.parse(result.error)[0].message);
   }
 
-  const { name, barCode } = resultBusinessRules.data;
+  const { name, barCode } = result.data;
   
   if (barCode) {
     // busqueda exacta por codigo
