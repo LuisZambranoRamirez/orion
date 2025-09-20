@@ -176,7 +176,7 @@ FOR EACH ROW
 BEGIN
     -- Solo registrar si realmente cambió el precio
     IF NEW.gainAmount <> OLD.gainAmount THEN
-        INSERT INTO productoGainAmountHistory (productNameId, gainAmount)
+        INSERT INTO productGainAmountHistory (productNameId, gainAmount)
         VALUES (NEW.productNameId, NEW.gainAmount);
     END IF;
 END $$

@@ -1,22 +1,48 @@
-import {registerProduct, getCategoriesProduct, getAllProducts, getSaleModesProduct, getProductByFilter} from '../services/product.js';
-import { validateProductTechnicalRules } from '../schemas/product.js';
+import {registerProduct, getCategoriesProduct, getAllProducts, getSaleModesProduct, getMatchingProductByName, updateExistingProduct, getProductByBarCode} from '../services/product.js';
+import {  validateProductNameFormat } from '../schemas/product.js';
 import {registerLogError} from '../services/log.js';
 
-export async function register(req, res) {
+export async function updateProduct(req, res) {
   try {
-    const techResult = await validateProductTechnicalRules(req.body);
+    const techResult = await validatePartialProductTechnicalRules(req.body);
 
     if (!techResult.success) {
       return res.status(422).json({ error: JSON.parse(techResult.error)[0].message });
     }
 
     let product = techResult.data;
-    product.name = product.name.trim().replace(/\s+/g, ' ');
 
-    const registrationResult = await registerProduct(product);
+    if (product.name) {
+      product.name = product.name.trim().replace(/\s+/g, ' ');
+    }
 
-    if (!registrationResult.isSuccess) {
-      return res.status(422).json({ error: registrationResult.error });
+    const updateResult = await updateExistingProduct(product);
+
+    if (!updateResult.isSuccess) {
+      return res.status(422).json({ error: updateResult.error });
+    }
+
+    return res.status(200).json({ message: 'Producto actualizado correctamente' });
+  } catch (error) {
+    registerLogError(req, res, error);
+    return res.status(500).json({ error: 'Error interno del servidor' });
+  }
+}
+
+export async function register(req, res) {
+  try {
+    const techResult = await validateProductNameFormat(req.body);
+
+    if (!techResult.success) {
+      return res.status(422).json({ error: JSON.parse(techResult.error)[0].message });
+    }
+
+    req.body.name = req.body.name.trim().replace(/\s+/g, ' ');
+
+    const registerResult = await registerProduct(req.body);
+
+    if (!registerResult.isSuccess) {
+      return res.status(422).json({ error: registerResult.error });
     }
 
     return res.status(201).json({ message: 'Producto registrado correctamente' });
@@ -26,21 +52,29 @@ export async function register(req, res) {
   }
 };
 
-/**
- * GET /search?name=...&barCode=...
- * - Si viene barCode => busca por codigo EXACTO
- * - Si viene name => busca por nombre (LIKE %name%)
- * - Si no vienen parametros => 400
- */
 export async function getByQuery(req, res) {
   try {
-    const result = await getProductByFilter(req.query);
+    const { name, barCode} = req.query;
 
-    if (!result.isSuccess) {
-      return res.status(422).json({ error: result.error });
+    if (barCode) {
+      const result = await getProductByBarCode(barCode);
+
+      if (!result.isSuccess) {
+        return res.status(402).json({ error: result.error})
+      }
+      return res.status(200).json({ product: result.value})
     }
 
-    return res.status(200).json({ product: result.value });
+    if (name) {
+      const result = await getMatchingProductByName(req.query);
+
+      if (!result.isSuccess) {
+        return res.status(402).json({ error: result.error})
+      }
+      return res.status(200).json({ product: result.value})
+    }
+
+    return res.status(402).json({ error: 'Se espera un identificador' });
   } catch (error) {
     registerLogError(req, res, error);
     return res.status(500).json({ error: 'Error interno del sersvidor'});

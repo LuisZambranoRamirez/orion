@@ -7,10 +7,11 @@ POST http://localhost:8090/product
 Content-Type: application/json
 
 {
-  "name": "SCafe",
+  "name": "SCaafe",
   "gainAmount": 5.50,
+  "stock": 1,
   "reorderLevel": 10,
-  "barCode": "1215577891123",
+  "barCode": "1211577891123",
   "saleMode": "Unidad",
   "category": "Café/Infusiones"
 }
@@ -22,7 +23,19 @@ GET http://localhost:8090/product/categories
 GET http://localhost:8090/product/saleModes 
 
 ### BUSCAR POR NOMBRE
-GET http://localhost:8090/product/search?name=Drakotako
+GET http://localhost:8090/product/search?name=cafe
 
 ### BUSCAR POR CODIGO DE BARRAS
 GET http://localhost:8090/product/search?barCode=1214567891123
+
+### ACTUALIZAR PRODUCTO
+PUT http://localhost:8090/product/
+Content-Type: application/json
+
+{
+  "name": "SCaafe",
+  "gainAmount": 20,
+  "reorderLevel": 10,
+  "saleMode": "Unidad",
+  "category": "Lácteos"
+}
