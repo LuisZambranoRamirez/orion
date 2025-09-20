@@ -1,16 +1,19 @@
 import {z} from 'zod';
 
-export async function validateProductSchemaBusinessRules(object) {
+export async function validateProductBusinessRules(object) {
   return productSchemaBusinessRules.safeParseAsync(object);
 }
 
-export function validatePartialProductBusinessSchema(object) {
+export async function validatePartialProductBusiness(object) {
   return productSchemaBusinessRules.partial().safeParseAsync(object);
 }
 
+export async function validateProductTechnicalRules(object) {
+  return productSchemaTechnicalRules.safeParseAsync(object);
+}
 
 export const categories = ['Bebidas', 'Abarrotes/Secos', 'Café/Infusiones', 'Lácteos', 'Carnes', 'Snacks/Golosinas', 'Higiene/Cuidado Personal', 'Limpieza/hogar', 'Bebés/Mamá', 'Mascotas','otros'];
-const saleModes = ['Unidad', 'Granel', 'Unidad/Granel'];
+export const saleModes = ['Unidad', 'Granel', 'Unidad/Granel'];
 
 const productSchemaBusinessRules = z.object({
   name: z
@@ -40,3 +43,25 @@ const productSchemaBusinessRules = z.object({
   category: z
   .enum(categories,{message: "La categoria no es válida"})
 });
+
+const productSchemaTechnicalRules = z.object({
+  name: z
+  .string()
+  .regex(/^[A-Za-z0-9Ññ\s]+$/, {message: 'El nombre solo puede contener letras sin tildes y/o números'}),
+
+  gainAmount: z
+  .number(),
+
+  reorderLevel: z
+  .int()
+  .optional(),
+
+  barCode: z
+  .string(),
+
+  saleMode: z
+  .enum(saleModes, {message: "El modo de venta no es válido"}),
+
+  category: z
+  .enum(categories,{message: "La categoria no es válida"})
+})

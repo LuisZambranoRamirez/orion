@@ -12,6 +12,11 @@ Enum SaleMode {
   "Unidad/Granel"
 }
 
+ENUM paymentMethod {
+  Efectivo
+  Digital
+}
+
 Enum ProductCategory {
   Bebidas
   "Abarrotes/Secos"
@@ -102,6 +107,7 @@ Table pay {
   payId int [pk, increment]
   saleId int [not null, ref: > sale.saleId]
   amount decimal(10,2) [not null]
+  paymentMethod paymentMethod [not null]
   registrarionDate timestamp [default: `CURRENT_TIMESTAMP`, not null]
 
   Note: 'CHECK (total > 0)'

@@ -1,17 +1,17 @@
-import { registerProductDB, isProductBarCodeExistsDB, isProductNameExistsDB, getAllProductsDB } from '../data/product.js';
-import { validateProductSchemaBusinessRules, validatePartialProductBusinessSchema, categories } from '../schemas/product.js';
+import { registerProductDB, isProductBarCodeExistsDB, isProductNameExistsDB, getAllProductsDB, getMatchingProductByName, getProductByBarCodeDB } from '../data/product.js';
+import { validateProductBusinessRules, validatePartialProductBusiness, categories, saleModes } from '../schemas/product.js';
 import { Result } from './Result.js'; 
 
 
 export async function registerProduct(product) {
     // Reglas de negocio
-    const result = await validateProductSchemaBusinessRules(product);
+    const result = await validateProductBusinessRules(product);
 
     if (!result.success) {
       return Result.failure(JSON.parse(result.error)[0].message);
     }
 
-    const { name, gainAmount, stock, barCode, saleMode, category } = result.data;  
+    const { name, gainAmount, reorderLevel, barCode, saleMode, category } = result.data;  
 
     if(await isProductNameExistsDB(name)) {
       return Result.failure(`El prodcuto -- ${name} -- ya esta registrado`);
@@ -21,9 +21,35 @@ export async function registerProduct(product) {
       return Result.failure(`El codigo de barras -- ${barCode} -- ya esta registrado`);
     }
 
-    await registerProductDB(name, gainAmount, 0, barCode, saleMode, category);
+    await registerProductDB(name, gainAmount, 0, reorderLevel, barCode, saleMode, category);
     return Result.success('');
 } 
+
+export async function getProductByFilter(prodcut) {
+  const result = await validatePartialProductBusiness(prodcut);
+
+  if (!result.success) {
+    return Result.failure(JSON.parse(result.error)[0].message);
+  }
+  
+  const {name, barCode} = result.data;
+
+  if (barCode) {
+    const productByBarCode = await getProductByBarCodeDB(barCode);
+    return productByBarCode.length === 0
+      ? Result.failure(`El código -- ${barCode} no está registrado`)
+      : Result.success(productByBarCode);
+  }
+
+  if (name) {
+    const matchingProduct = await getMatchingProductByName(name);
+    return matchingProduct.length === 0
+      ? Result.failure(`El producto -- ${name} -- no está registrado`)
+      : Result.success(matchingProduct);
+  }
+
+  return Result.failure('Invalid input: Se necesita un identificador (nombre o codigo de barras)')
+}
 
 export async function updateProductField(productoId, field, value) {
     
@@ -37,32 +63,6 @@ export function getCategoriesProduct() {
   return categories;
 }
 
-/**
- * Buscar productos:
- * - Si viene barCode: busqueda exacta por codigo
- * - Si viene name: busqueda parcial por nombre
- * - Si ambos: prioriza barCode (asumiendo que barCode es más específico)
- */
-export async function getProductsByFilter() {
-  const result = await validatePartialProductBusinessSchema(result);
-
-  if (!result.success) {
-    throw new BusinessError(JSON.parse(result.error)[0].message);
-  }
-
-  const { name, barCode } = result.data;
-  
-  if (barCode) {
-    // busqueda exacta por codigo
-    const product = await getProductByBarCodeDB(barCode);
-    // devolver array para consistencia con getAll
-    return product ? [product] : [];
-  }
-
-  if (name) {
-    return await getProductsByNameDB(name);
-  }
-
-  // si llegara aqui, es error de uso
-  throw new BusinessError('Falta criterio de busqueda (name o barCode)');
+export function getSaleModesProduct() {
+  return saleModes;
 }

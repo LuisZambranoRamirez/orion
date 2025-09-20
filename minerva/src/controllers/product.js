@@ -1,22 +1,51 @@
-import {registerProduct, getCategoriesProduct, getAllProducts} from '../services/product.js';
-import {registerLogError} from '../services/log.js'
+import {registerProduct, getCategoriesProduct, getAllProducts, getSaleModesProduct, getProductByFilter} from '../services/product.js';
+import { validateProductTechnicalRules } from '../schemas/product.js';
+import {registerLogError} from '../services/log.js';
 
 export async function register(req, res) {
-  // Aqui debe ir reglas tecnicas cuando las haya
   try {
-    const result = await registerProduct(req.body);
+    const techResult = await validateProductTechnicalRules(req.body);
 
-    if (!result.isSuccess) {
-      return res.status(422).json({ error: result.error });
+    if (!techResult.success) {
+      return res.status(422).json({ error: JSON.parse(techResult.error)[0].message });
     }
-    
+
+    let product = techResult.data;
+    product.name = product.name.trim().replace(/\s+/g, ' ');
+
+    const registrationResult = await registerProduct(product);
+
+    if (!registrationResult.isSuccess) {
+      return res.status(422).json({ error: registrationResult.error });
+    }
+
+    return res.status(201).json({ message: 'Producto registrado correctamente' });
   } catch (error) {
     registerLogError(req, res, error);
     return res.status(500).json({ error: 'Error interno del sersvidor'});
   }
-
-  return res.status(201).json({ message: 'Producto registrado correctamente' });
 };
+
+/**
+ * GET /search?name=...&barCode=...
+ * - Si viene barCode => busca por codigo EXACTO
+ * - Si viene name => busca por nombre (LIKE %name%)
+ * - Si no vienen parametros => 400
+ */
+export async function getByQuery(req, res) {
+  try {
+    const result = await getProductByFilter(req.query);
+
+    if (!result.isSuccess) {
+      return res.status(422).json({ error: result.error });
+    }
+
+    return res.status(200).json({ product: result.value });
+  } catch (error) {
+    registerLogError(req, res, error);
+    return res.status(500).json({ error: 'Error interno del sersvidor'});
+  }
+}
 
 export async function getAll(req, res) {
   return res.status(200).json({ products: await getAllProducts()});
@@ -26,29 +55,6 @@ export async function getCategories(req, res) {
   return res.status(200).json({ categories:  getCategoriesProduct()});
 }
 
-/**
- * GET /search?name=...&barCode=...
- * - Si viene barCode => busca por codigo EXACTO
- * - Si viene name => busca por nombre (LIKE %name%)
- * - Si no vienen parametros => 400
- */
-export async function getByQuery(req, res) {
-  const { name, barCode } = req.query;
-
-  if (!name && !barCode) {
-    return res.status(400).json({ error: 'Se requiere query param name o barCode' });
-  }
-
-  try {
-    const products = await getProductsByFilter({ name, barCode });
-    return res.status(200).json({ products });
-  } catch (error) {
-    if (error.name === 'BusinessError') {
-      return res.status(422).json({ error: error.message });
-    } else if (error.name === 'DataBaseError') {
-      console.log('Error en la base de datos:');
-    }
-    console.log(error);
-    return res.status(500).json({ error: 'Error interno del servidor' });
-  }
+export async function getSaleModes(req, res) {
+  return res.status(200).json({ salesmodes:  getSaleModesProduct()});
 }

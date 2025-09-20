@@ -1,0 +1,28 @@
+
+### TRAER TODOS LOS PRODCUTOS
+GET http://localhost:8090/product
+
+### REGISTRAR UN PRODUCTO
+POST http://localhost:8090/product
+Content-Type: application/json
+
+{
+  "name": "SCafe",
+  "gainAmount": 5.50,
+  "reorderLevel": 10,
+  "barCode": "1215577891123",
+  "saleMode": "Unidad",
+  "category": "Café/Infusiones"
+}
+
+### TRAER TODAS LAS CATEGORIAS 
+GET http://localhost:8090/product/categories
+
+### TRAER TODOS LOS MODOS DE VENTA
+GET http://localhost:8090/product/saleModes 
+
+### BUSCAR POR NOMBRE
+GET http://localhost:8090/product/search?name=Drakotako
+
+### BUSCAR POR CODIGO DE BARRAS
+GET http://localhost:8090/product/search?barCode=1214567891123

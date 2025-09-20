@@ -1,11 +1,13 @@
 import {Router} from 'express';
-import {register, getCategories, getAll, getByQuery} from '../controllers/product.js';
+import {register, getCategories, getAll, getByQuery, getSaleModes} from '../controllers/product.js';
 
 export const productRouters = Router();
 
-productRouters.post('/register', register);
+productRouters.post('/', register);
 
 productRouters.get('/categories', getCategories);
+
+productRouters.get('/saleModes', getSaleModes);
 
 // Listado completo
 productRouters.get('/', getAll);

@@ -1,12 +1,12 @@
 import connection from './mysql.js';
 import { DataBaseError } from '../errors/dataBaseError.js';
 
-export async function registerProductDB(name, gainAmount, stock, barCode, saleMode, category) {
+export async function registerProductDB(name, gainAmount, stock, reorderLevel, barCode, saleMode, category) {
   try {
 
     await connection.query(
-      'INSERT INTO product (productNameId, gainAmount, stock, barCode, saleMode, category) VALUES (?, ?, ?, ?, ?, ?)',
-      [name, gainAmount, stock, barCode, saleMode, category]
+      'INSERT INTO product (productNameId, gainAmount, stock, reorderLevel, barCode, saleMode, category) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [name, gainAmount, stock, reorderLevel, barCode, saleMode, category]
     );
 
   } catch (error) {
@@ -28,15 +28,11 @@ export async function updateProductFieldDB(productoId, field, value) {
   return true;
 }
 
-/**
- * Búsqueda parcial por nombre (LIKE)
- * devuelve array de productos que coincidan parcialmente con name
- */
-export async function getProductsByNameDB(name) {
+export async function getMatchingProductByName(name) {
   try {
     const pattern = `%${name}%`;
     const [rows] = await connection.query(
-      'SELECT * FROM product WHERE name LIKE ?',
+      'SELECT * FROM product WHERE productNameId LIKE ? LIMIT 3',
       [pattern]
     );
     return rows;
@@ -45,17 +41,13 @@ export async function getProductsByNameDB(name) {
   }
 }
 
-/**
- * Búsqueda exacta por codigo de barras
- * devuelve un objeto producto o null
- */
 export async function getProductByBarCodeDB(barCode) {
   try {
     const [rows] = await connection.query(
       'SELECT * FROM product WHERE barCode = ?',
       [barCode]
     );
-    return rows.length > 0 ? rows[0] : null;
+    return rows;
   } catch (error) {
     throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
   }
@@ -63,7 +55,8 @@ export async function getProductByBarCodeDB(barCode) {
 
 export async function getAllProductsDB() {
   try {
-    return await connection.query('SELECT * FROM product');
+    const [rows] = await connection.query('SELECT * FROM product');
+    return rows;
   } catch (error) {
     throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
   }

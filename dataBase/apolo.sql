@@ -121,6 +121,7 @@ CREATE TABLE pay (
   payId INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   saleId INT UNSIGNED NOT NULL,
   amount DECIMAL(10,2) NOT NULL,
+  paymentMethod ENUM('Efectivo', 'Digital') NOT NULL,
   registrationDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
   CONSTRAINT chk_pay_amount CHECK (amount > 0),
