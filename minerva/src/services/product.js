@@ -9,8 +9,10 @@ export async function updateExistingProduct(product) {
     return Result.failure(JSON.parse(result.error)[0].message);
   }
 
-  await updateProductByIdentifierDB(result.data);
-
+  const updateResult = await updateProductByIdentifierDB(result.data);
+  if (!updateResult) {
+    return Result.failure('');
+  }
   return Result.success('');
 }
 
@@ -31,7 +33,10 @@ export async function registerProduct(product) {
     return Result.failure(`El codigo de barras -- ${barCode} -- ya esta registrado`);
   }
 
-  await registerProductDB(result.data);
+  const registerResult = await registerProductDB(result.data);
+  if (!registerResult) {
+    return Result.failure('');
+  }
   return Result.success('');
 } 
 
