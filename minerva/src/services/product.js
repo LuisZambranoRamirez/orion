@@ -50,7 +50,7 @@ export async function getMatchingProductByName(name) {
 }
 
 export async function getProductByBarCode(barCode) {
-  const result = await validateProductBarCode(prodcut);
+  const result = await validateProductBarCode(barCode);
 
   if (!result.success) {
     return Result.failure(result.error);

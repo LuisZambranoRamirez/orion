@@ -69,7 +69,7 @@ export async function getByQuery(req, res) {
     return res.status(422).json({ error: 'Se necesita un identificador' });
   } catch (error) {
     registerLogError(req, res, error);
-    return res.status(500).json({ error: 'Error interno del sersvidor'});
+    return res.status(500).json({ error: 'Error interno del servidor'});
   }
 }
 
