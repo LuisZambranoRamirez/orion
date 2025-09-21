@@ -12,8 +12,8 @@ export async function validateProductNameFormat(object) {
   return nameFormatSchema.safeParseAsync(object);
 }
 
-export async function validateProductName(object) {
-  return nameSchema.safeParseAsync(object);
+export async function validateProductName(name) {
+  return nameSchema.safeParseAsync(name);
 }
 
 export async function validateProductBarCode(object) {

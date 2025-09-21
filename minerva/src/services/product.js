@@ -9,13 +9,7 @@ export async function updateExistingProduct(product) {
     return Result.failure(JSON.parse(result.error)[0].message);
   }
 
-  const { name, gainAmount, reorderLevel, barCode, saleMode, category } = result.data;
-
-  const updated = await updateProductByIdentifierDB({ name, gainAmount, reorderLevel, barCode, saleMode, category });
-
-  if (!updated) {
-    return Result.failure('No se pudo actualizar el producto. Verifica que exista.');
-  }
+  await updateProductByIdentifierDB(result.data);
 
   return Result.success('');
 }
@@ -43,7 +37,7 @@ export async function registerProduct(product) {
 
 export async function getMatchingProductByName(name) {
   const result = await validateProductName(name);
-
+  console.log(result)
   if (!result.success) {
     return Result.failure(JSON.parse(result.error)[0].message);
   }

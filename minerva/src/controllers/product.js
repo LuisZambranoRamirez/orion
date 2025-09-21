@@ -4,19 +4,11 @@ import {registerLogError} from '../services/log.js';
 
 export async function updateProduct(req, res) {
   try {
-    const techResult = await validatePartialProductTechnicalRules(req.body);
-
-    if (!techResult.success) {
-      return res.status(422).json({ error: JSON.parse(techResult.error)[0].message });
+    if (!req.body.name) {
+      return res.status(422).json({ error: 'Se necesita el nombre del producto'})
     }
 
-    let product = techResult.data;
-
-    if (product.name) {
-      product.name = product.name.trim().replace(/\s+/g, ' ');
-    }
-
-    const updateResult = await updateExistingProduct(product);
+    const updateResult = await updateExistingProduct(req.body);
 
     if (!updateResult.isSuccess) {
       return res.status(422).json({ error: updateResult.error });
@@ -31,7 +23,7 @@ export async function updateProduct(req, res) {
 
 export async function register(req, res) {
   try {
-    const techResult = await validateProductNameFormat(req.body);
+    const techResult = await validateProductNameFormat(req.body.name);
 
     if (!techResult.success) {
       return res.status(422).json({ error: JSON.parse(techResult.error)[0].message });
@@ -60,21 +52,21 @@ export async function getByQuery(req, res) {
       const result = await getProductByBarCode(barCode);
 
       if (!result.isSuccess) {
-        return res.status(402).json({ error: result.error})
+        return res.status(422).json({ error: result.error})
       }
       return res.status(200).json({ product: result.value})
     }
 
     if (name) {
-      const result = await getMatchingProductByName(req.query);
+      const result = await getMatchingProductByName(name);
 
       if (!result.isSuccess) {
-        return res.status(402).json({ error: result.error})
+        return res.status(422).json({ error: result.error})
       }
       return res.status(200).json({ product: result.value})
     }
 
-    return res.status(402).json({ error: 'Se espera un identificador' });
+    return res.status(422).json({ error: 'Se necesita un identificador' });
   } catch (error) {
     registerLogError(req, res, error);
     return res.status(500).json({ error: 'Error interno del sersvidor'});

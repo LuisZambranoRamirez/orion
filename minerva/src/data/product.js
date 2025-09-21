@@ -31,26 +31,18 @@ export async function updateProductByIdentifierDB({ name, barCode, gainAmount, r
       values.push(category);
     }
 
-    if (fields.length === 0) return false;
-
-    const whereClause = [];
-    if (name) {
-      whereClause.push('productNameId = ?');
-      values.push(name);
-    }
-
-    if (barCode) {
-      whereClause.push('barCode = ?');
+    if (barCode !== undefined) {
+      fields.push('barCode = ?');
       values.push(barCode);
     }
 
-    if (whereClause.length === 0 || fields.length === 0) return false;
+    if (fields.length === 0) return false;
 
-    const query = `
-      UPDATE product
-      SET ${fields.join(', ')}
-      WHERE ${whereClause.join(' OR ')}
-    `;
+    if (name !== undefined) {
+      values.push(name);
+    }
+
+    const query = `UPDATE product SET ${fields.join(', ')} WHERE productNameId = ?`;
 
     const [result] = await connection.query(query, values);
 
