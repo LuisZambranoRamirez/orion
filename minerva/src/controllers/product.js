@@ -1,64 +1,66 @@
 import { ProductService } from '../services/product.js';
-import {  validateProductNameFormat } from '../schemas/product.js';
+import { validateProductNameFormat } from '../schemas/product.js';
 
-export async function updateProduct(req, res) {
-  if (!req.body.name) {
-    return res.status(422).json({ error: 'Se necesita el nombre del producto' });
+export class ProductController {
+  static async updateProduct(req, res) {
+    if (!req.body.name) {
+      return res.status(422).json({ error: 'Se necesita el nombre del producto' });
+    }
+
+    const updateResult = await ProductService.updateExistingProduct(req.body);
+
+    return !updateResult.isSuccess
+      ? res.status(422).json({ error: updateResult.error })
+      : res.status(200).json({ message: 'Producto actualizado correctamente' });
   }
 
-  const updateResult = await ProductService.updateExistingProduct(req.body);
+  static async register(req, res) {
+    const techResult = await validateProductNameFormat(req.body.name);
 
-  return !updateResult.isSuccess
-    ? res.status(422).json({ error: updateResult.error })
-    : res.status(200).json({ message: 'Producto actualizado correctamente' });
-};
+    if (!techResult.success) {
+      return res.status(422).json({ error: JSON.parse(techResult.error)[0].message });
+    }
 
-export async function register(req, res) {
-  const techResult = await validateProductNameFormat(req.body.name);
+    req.body.name = req.body.name.trim().replace(/\s+/g, ' ');
 
-  if (!techResult.success) {
-    return res.status(422).json({ error: JSON.parse(techResult.error)[0].message });
+    const registerResult = await ProductService.registerProduct(req.body);
+
+    return !registerResult.isSuccess
+      ? res.status(422).json({ error: registerResult.error })
+      : res.status(201).json({ message: 'Producto registrado correctamente' });
   }
 
-  req.body.name = req.body.name.trim().replace(/\s+/g, ' ');
+  static async getByQuery(req, res) {
+    const { name, barCode } = req.query;
 
-  const registerResult = await ProductService.registerProduct(req.body);
+    if (barCode) {
+      const result = await ProductService.getProductByBarCode(barCode);
 
-  return !registerResult.isSuccess
-  ? res.status(422).json({ error: registerResult.error })
-  : res.status(201).json({ message: 'Producto registrado correctamente' });
-};
+      return !result.isSuccess
+        ? res.status(422).json({ error: result.error })
+        : res.status(200).json({ product: result.value });
+    }
 
-export async function getByQuery(req, res) {
-  const { name, barCode } = req.query;
+    if (name) {
+      const result = await ProductService.getMatchingProductByName(name);
 
-  if (barCode) {
-    const result = await ProductService.getProductByBarCode(barCode);
+      return !result.isSuccess
+        ? res.status(422).json({ error: result.error })
+        : res.status(200).json({ product: result.value });
+    }
 
-    return !result.isSuccess
-      ? res.status(422).json({ error: result.error })
-      : res.status(200).json({ product: result.value });
+    return res.status(422).json({ error: 'Se necesita un identificador' });
   }
 
-  if (name) {
-    const result = await ProductService.getMatchingProductByName(name);
-
-    return !result.isSuccess
-      ? res.status(422).json({ error: result.error })
-      : res.status(200).json({ product: result.value });
+  static async getAll(req, res) {
+    return res.status(200).json({ products: await ProductService.getAllProducts() });
   }
 
-  return res.status(422).json({ error: 'Se necesita un identificador' });
-}
+  static async getCategories(req, res) {
+    return res.status(200).json({ categories: ProductService.getCategoriesProduct() });
+  }
 
-export async function getAll(req, res) {
-  return res.status(200).json({ products: await ProductService.getAllProducts() });
-}
-
-export async function getCategories(req, res) {
-  return res.status(200).json({ categories: ProductService.getCategoriesProduct() });
-}
-
-export async function getSaleModes(req, res) {
-  return res.status(200).json({ salesmodes: ProductService.getSaleModesProduct() });
+  static async getSaleModes(req, res) {
+    return res.status(200).json({ salesmodes: ProductService.getSaleModesProduct() });
+  }
 }
