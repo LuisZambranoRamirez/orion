@@ -69,11 +69,11 @@ export class ProductRepository {
   static async getMatchingProductByName(name) {
     try {
       const pattern = `%${name}%`;
-      const [rows] = await connection.query(
+      const [result] = await connection.query(
         'SELECT * FROM product WHERE productNameId LIKE ? LIMIT 3',
         [pattern]
       );
-      return rows;
+      return result;
     } catch (error) {
       throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
     }
@@ -81,11 +81,11 @@ export class ProductRepository {
 
   static async getProductByBarCode(barCode) {
     try {
-      const [rows] = await connection.query(
+      const [result] = await connection.query(
         'SELECT * FROM product WHERE barCode = ?',
         [barCode]
       );
-      return rows;
+      return result;
     } catch (error) {
       throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
     }
@@ -93,8 +93,8 @@ export class ProductRepository {
 
   static async getAllProducts() {
     try {
-      const [rows] = await connection.query('SELECT * FROM product');
-      return rows;
+      const [result] = await connection.query('SELECT * FROM product');
+      return result;
     } catch (error) {
       throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
     }

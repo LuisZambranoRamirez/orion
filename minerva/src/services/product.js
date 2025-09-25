@@ -20,10 +20,9 @@ export class ProductService {
     }
 
     const updateResult = await ProductRepository.updateProductByIdentifier(result.data);
-    if (!updateResult) {
-      return Result.failure('No se pudo actualizar el producto');
-    }
-    return Result.success('Producto actualizado con éxito');
+    return !updateResult
+      ? Result.failure('No se pudo actualizar el producto')
+      : Result.success('Producto actualizado con éxito');
   }
 
   static async registerProduct(product) {
@@ -44,10 +43,10 @@ export class ProductService {
     }
 
     const registerResult = await ProductRepository.registerProduct(result.data);
-    if (!registerResult) {
-      return Result.failure('No se pudo registrar el producto');
-    }
-    return Result.success('Producto registrado con éxito');
+
+    return !registerResult
+    ? Result.failure('No se pudo registrar el producto')
+    : Result.success('Producto registrado con éxito');
   } 
 
   static async getMatchingProductByName(name) {
