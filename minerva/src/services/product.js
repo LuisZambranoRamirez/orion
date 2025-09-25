@@ -21,8 +21,8 @@ export class ProductService {
 
     const updateResult = await ProductRepository.updateProductByIdentifier(result.data);
     return !updateResult
-      ? Result.failure('No se pudo actualizar el producto')
-      : Result.success('Producto actualizado con éxito');
+    ? Result.failure('No se pudo actualizar el producto')
+    : Result.success('Producto actualizado con éxito');
   }
 
   static async registerProduct(product) {
@@ -59,8 +59,8 @@ export class ProductService {
     const matchingProduct = await ProductRepository.getMatchingProductByName(name);
 
     return matchingProduct.length === 0
-      ? Result.failure(`El producto -- ${name} -- no está registrado`)
-      : Result.success(matchingProduct);
+    ? Result.failure(`El producto -- ${name} -- no está registrado`)
+    : Result.success(matchingProduct);
   }
 
   static async getProductByBarCode(barCode) {
@@ -73,8 +73,8 @@ export class ProductService {
     const productByBarCode = await ProductRepository.getProductByBarCode(barCode);
     
     return productByBarCode.length === 0
-      ? Result.failure(`El código -- ${barCode} -- no está registrado`)
-      : Result.success(productByBarCode);
+    ? Result.failure(`El código -- ${barCode} -- no está registrado`)
+    : Result.success(productByBarCode);
   }
 
   static async getAllProducts() {
