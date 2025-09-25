@@ -12,7 +12,7 @@ import { ProductRepository } from '../data/product.js';   // <-- usa tu repo
 
 export class ProductService {
 
-  static async updateExistingProduct(product) {
+  static async updateProduct(product) {
     const result = await validatePartialProductBusiness(product);
 
     if (!result.success) {
@@ -20,9 +20,9 @@ export class ProductService {
     }
 
     const updateResult = await ProductRepository.updateProductByIdentifier(result.data);
-    return !updateResult
-    ? Result.failure('No se pudo actualizar el producto')
-    : Result.success('Producto actualizado con éxito');
+    return updateResult
+    ? Result.success('Producto actualizado con éxito')
+    : Result.failure('No se pudo actualizar el producto');
   }
 
   static async registerProduct(product) {
@@ -44,9 +44,9 @@ export class ProductService {
 
     const registerResult = await ProductRepository.registerProduct(result.data);
 
-    return !registerResult
-    ? Result.failure('No se pudo registrar el producto')
-    : Result.success('Producto registrado con éxito');
+    return registerResult
+    ? Result.success('Producto registrado con éxito')
+    : Result.failure('No se pudo registrar el producto');
   } 
 
   static async getMatchingProductByName(name) {

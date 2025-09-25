@@ -3,15 +3,15 @@ import { validateProductNameFormat } from '../schemas/product.js';
 
 export class ProductController {
   static async updateProduct(req, res) {
-    if (!req.body.name) {
+    if (!req.query.name) {
       return res.status(422).json({ error: 'Se necesita el nombre del producto' });
     }
 
-    const updateResult = await ProductService.updateExistingProduct(req.body);
+    const updateResult = await ProductService.updateProduct(req.body);
 
-    return !updateResult.isSuccess
-    ? res.status(422).json({ error: updateResult.error })
-    : res.status(200).json({ message: 'Producto actualizado correctamente' });
+    return updateResult.isSuccess
+    ? res.status(200).json({ message: 'Producto actualizado correctamente' })
+    : res.status(422).json({ error: updateResult.error });
   }
 
   static async register(req, res) {
@@ -21,13 +21,13 @@ export class ProductController {
       return res.status(422).json({ error: JSON.parse(techResult.error)[0].message });
     }
 
-    req.body.name = req.body.name.trim().replace(/\s+/g, ' ');
+    req.body.name = req.body.name.trim().replace(/\s+/g, ' ').toLowerCase();
 
     const registerResult = await ProductService.registerProduct(req.body);
 
-    return !registerResult.isSuccess
-    ? res.status(422).json({ error: registerResult.error })
-    : res.status(201).json({ message: 'Producto registrado correctamente' });
+    return registerResult.isSuccess
+    ? res.status(201).json({ message: 'Producto registrado correctamente' })
+    : res.status(422).json({ error: registerResult.error });
   }
 
   static async getByQuery(req, res) {
@@ -36,17 +36,17 @@ export class ProductController {
     if (barCode) {
       const result = await ProductService.getProductByBarCode(barCode);
 
-      return !result.isSuccess
-      ? res.status(422).json({ error: result.error })
-      : res.status(200).json({ product: result.value });
+      return result.isSuccess
+      ? res.status(200).json({ product: result.value })
+      : res.status(422).json({ error: result.error });
     }
 
     if (name) {
       const result = await ProductService.getMatchingProductByName(name);
 
-      return !result.isSuccess
-      ? res.status(422).json({ error: result.error })
-      : res.status(200).json({ product: result.value });
+      return result.isSuccess
+      ? res.status(200).json({ product: result.value })
+      : res.status(422).json({ error: result.error });
     }
 
     return res.status(422).json({ error: 'Se necesita un identificador' });
