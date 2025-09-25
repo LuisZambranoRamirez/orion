@@ -10,7 +10,7 @@ export class ProductController {
     const updateResult = await ProductService.updateProduct(req.body);
 
     return updateResult.isSuccess
-    ? res.status(200).json({ message: 'Producto actualizado correctamente' })
+    ? res.status(200).json({ message: updateResult.value })
     : res.status(422).json({ error: updateResult.error });
   }
 
@@ -26,7 +26,7 @@ export class ProductController {
     const registerResult = await ProductService.registerProduct(req.body);
 
     return registerResult.isSuccess
-    ? res.status(201).json({ message: 'Producto registrado correctamente' })
+    ? res.status(201).json({ message: registerResult.value })
     : res.status(422).json({ error: registerResult.error });
   }
 
