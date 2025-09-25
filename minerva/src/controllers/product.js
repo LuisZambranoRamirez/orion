@@ -8,11 +8,9 @@ export async function updateProduct(req, res) {
 
   const updateResult = await ProductService.updateExistingProduct(req.body);
 
-  if (!updateResult.isSuccess) {
-    return res.status(422).json({ error: updateResult.error });
-  }
-
-  return res.status(200).json({ message: 'Producto actualizado correctamente' });
+  return !updateResult.isSuccess
+    ? res.status(422).json({ error: updateResult.error })
+    : res.status(200).json({ message: 'Producto actualizado correctamente' });
 };
 
 export async function register(req, res) {
@@ -26,11 +24,9 @@ export async function register(req, res) {
 
   const registerResult = await ProductService.registerProduct(req.body);
 
-  if (!registerResult.isSuccess) {
-    return res.status(422).json({ error: registerResult.error });
-  }
-
-  return res.status(201).json({ message: 'Producto registrado correctamente' });
+  return !registerResult.isSuccess
+  ? res.status(422).json({ error: registerResult.error })
+  : res.status(201).json({ message: 'Producto registrado correctamente' });
 };
 
 export async function getByQuery(req, res) {
@@ -39,19 +35,17 @@ export async function getByQuery(req, res) {
   if (barCode) {
     const result = await ProductService.getProductByBarCode(barCode);
 
-    if (!result.isSuccess) {
-      return res.status(422).json({ error: result.error });
-    }
-    return res.status(200).json({ product: result.value });
+    return !result.isSuccess
+      ? res.status(422).json({ error: result.error })
+      : res.status(200).json({ product: result.value });
   }
 
   if (name) {
     const result = await ProductService.getMatchingProductByName(name);
 
-    if (!result.isSuccess) {
-      return res.status(422).json({ error: result.error });
-    }
-    return res.status(200).json({ product: result.value });
+    return !result.isSuccess
+      ? res.status(422).json({ error: result.error })
+      : res.status(200).json({ product: result.value });
   }
 
   return res.status(422).json({ error: 'Se necesita un identificador' });
