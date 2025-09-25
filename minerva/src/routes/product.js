@@ -1,16 +1,16 @@
-import {Router} from 'express';
-import {register, getCategories, getAll, getByQuery, getSaleModes, updateProduct} from '../controllers/product.js';
+import { Router } from 'express';
+import { ProductController } from '../controllers/product.js';
 
 export const productRouters = Router();
 
-productRouters.post('/', register);
+productRouters.post('/', ProductController.register);
 
-productRouters.get('/categories', getCategories);
+productRouters.get('/categories', ProductController.getCategories);
 
-productRouters.get('/saleModes', getSaleModes);
+productRouters.get('/saleModes', ProductController.getSaleModes);
 
-productRouters.get('/', getAll);
+productRouters.get('/', ProductController.getAll);
 
-productRouters.get('/search', getByQuery);
+productRouters.get('/search', ProductController.getByQuery);
 
-productRouters.put('/', updateProduct);
+productRouters.put('/', ProductController.updateProduct);
