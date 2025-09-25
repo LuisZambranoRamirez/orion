@@ -1,76 +1,60 @@
 import { ProductService } from '../services/product.js';
 import {  validateProductNameFormat } from '../schemas/product.js';
-import {registerLogError} from '../services/log.js';
 
 export async function updateProduct(req, res) {
-  try {
-    if (!req.body.name) {
-      return res.status(422).json({ error: 'Se necesita el nombre del producto' });
-    }
-
-    const updateResult = await ProductService.updateExistingProduct(req.body);
-
-    if (!updateResult.isSuccess) {
-      return res.status(422).json({ error: updateResult.error });
-    }
-
-    return res.status(200).json({ message: 'Producto actualizado correctamente' });
-  } catch (error) {
-    registerLogError(req, res, error);
-    return res.status(500).json({ error: 'Error interno del servidor' });
+  if (!req.body.name) {
+    return res.status(422).json({ error: 'Se necesita el nombre del producto' });
   }
+
+  const updateResult = await ProductService.updateExistingProduct(req.body);
+
+  if (!updateResult.isSuccess) {
+    return res.status(422).json({ error: updateResult.error });
+  }
+
+  return res.status(200).json({ message: 'Producto actualizado correctamente' });
 };
 
 export async function register(req, res) {
-  try {
-    const techResult = await validateProductNameFormat(req.body.name);
+  const techResult = await validateProductNameFormat(req.body.name);
 
-    if (!techResult.success) {
-      return res.status(422).json({ error: JSON.parse(techResult.error)[0].message });
-    }
-
-    req.body.name = req.body.name.trim().replace(/\s+/g, ' ');
-
-    const registerResult = await ProductService.registerProduct(req.body);
-
-    if (!registerResult.isSuccess) {
-      return res.status(422).json({ error: registerResult.error });
-    }
-
-    return res.status(201).json({ message: 'Producto registrado correctamente' });
-  } catch (error) {
-    registerLogError(req, res, error);
-    return res.status(500).json({ error: 'Error interno del servidor'});
+  if (!techResult.success) {
+    return res.status(422).json({ error: JSON.parse(techResult.error)[0].message });
   }
+
+  req.body.name = req.body.name.trim().replace(/\s+/g, ' ');
+
+  const registerResult = await ProductService.registerProduct(req.body);
+
+  if (!registerResult.isSuccess) {
+    return res.status(422).json({ error: registerResult.error });
+  }
+
+  return res.status(201).json({ message: 'Producto registrado correctamente' });
 };
 
 export async function getByQuery(req, res) {
-  try {
-    const { name, barCode } = req.query;
+  const { name, barCode } = req.query;
 
-    if (barCode) {
-      const result = await ProductService.getProductByBarCode(barCode);
+  if (barCode) {
+    const result = await ProductService.getProductByBarCode(barCode);
 
-      if (!result.isSuccess) {
-        return res.status(422).json({ error: result.error });
-      }
-      return res.status(200).json({ product: result.value });
+    if (!result.isSuccess) {
+      return res.status(422).json({ error: result.error });
     }
-
-    if (name) {
-      const result = await ProductService.getMatchingProductByName(name);
-
-      if (!result.isSuccess) {
-        return res.status(422).json({ error: result.error });
-      }
-      return res.status(200).json({ product: result.value });
-    }
-
-    return res.status(422).json({ error: 'Se necesita un identificador' });
-  } catch (error) {
-    registerLogError(req, res, error);
-    return res.status(500).json({ error: 'Error interno del servidor'});
+    return res.status(200).json({ product: result.value });
   }
+
+  if (name) {
+    const result = await ProductService.getMatchingProductByName(name);
+
+    if (!result.isSuccess) {
+      return res.status(422).json({ error: result.error });
+    }
+    return res.status(200).json({ product: result.value });
+  }
+
+  return res.status(422).json({ error: 'Se necesita un identificador' });
 }
 
 export async function getAll(req, res) {

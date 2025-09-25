@@ -1,5 +1,9 @@
+import {registerLogError} from '../services/log.js';
+
 export function errorHandler(err, req, res, next) {
-    console.error(err.message); // logueas solo el mensaje, no la traza completa
+    registerLogError(req, res, err);
+
+    console.log(err); // logueas solo el mensaje, no la traza completa
 
   if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
     return res.status(400).json({ error: 'JSON inválido en el request' });
