@@ -1,14 +1,14 @@
-import {registerProduct, getCategoriesProduct, getAllProducts, getSaleModesProduct, getMatchingProductByName, updateExistingProduct, getProductByBarCode} from '../services/product.js';
+import { ProductService } from '../services/product.js';
 import {  validateProductNameFormat } from '../schemas/product.js';
 import {registerLogError} from '../services/log.js';
 
 export async function updateProduct(req, res) {
   try {
     if (!req.body.name) {
-      return res.status(422).json({ error: 'Se necesita el nombre del producto'})
+      return res.status(422).json({ error: 'Se necesita el nombre del producto' });
     }
 
-    const updateResult = await updateExistingProduct(req.body);
+    const updateResult = await ProductService.updateExistingProduct(req.body);
 
     if (!updateResult.isSuccess) {
       return res.status(422).json({ error: updateResult.error });
@@ -19,7 +19,7 @@ export async function updateProduct(req, res) {
     registerLogError(req, res, error);
     return res.status(500).json({ error: 'Error interno del servidor' });
   }
-}
+};
 
 export async function register(req, res) {
   try {
@@ -31,7 +31,7 @@ export async function register(req, res) {
 
     req.body.name = req.body.name.trim().replace(/\s+/g, ' ');
 
-    const registerResult = await registerProduct(req.body);
+    const registerResult = await ProductService.registerProduct(req.body);
 
     if (!registerResult.isSuccess) {
       return res.status(422).json({ error: registerResult.error });
@@ -40,30 +40,30 @@ export async function register(req, res) {
     return res.status(201).json({ message: 'Producto registrado correctamente' });
   } catch (error) {
     registerLogError(req, res, error);
-    return res.status(500).json({ error: 'Error interno del sersvidor'});
+    return res.status(500).json({ error: 'Error interno del servidor'});
   }
 };
 
 export async function getByQuery(req, res) {
   try {
-    const { name, barCode} = req.query;
+    const { name, barCode } = req.query;
 
     if (barCode) {
-      const result = await getProductByBarCode(barCode);
+      const result = await ProductService.getProductByBarCode(barCode);
 
       if (!result.isSuccess) {
-        return res.status(422).json({ error: result.error})
+        return res.status(422).json({ error: result.error });
       }
-      return res.status(200).json({ product: result.value})
+      return res.status(200).json({ product: result.value });
     }
 
     if (name) {
-      const result = await getMatchingProductByName(name);
+      const result = await ProductService.getMatchingProductByName(name);
 
       if (!result.isSuccess) {
-        return res.status(422).json({ error: result.error})
+        return res.status(422).json({ error: result.error });
       }
-      return res.status(200).json({ product: result.value})
+      return res.status(200).json({ product: result.value });
     }
 
     return res.status(422).json({ error: 'Se necesita un identificador' });
@@ -74,13 +74,13 @@ export async function getByQuery(req, res) {
 }
 
 export async function getAll(req, res) {
-  return res.status(200).json({ products: await getAllProducts()});
+  return res.status(200).json({ products: await ProductService.getAllProducts() });
 }
 
 export async function getCategories(req, res) {
-  return res.status(200).json({ categories:  getCategoriesProduct()});
+  return res.status(200).json({ categories: ProductService.getCategoriesProduct() });
 }
 
 export async function getSaleModes(req, res) {
-  return res.status(200).json({ salesmodes:  getSaleModesProduct()});
+  return res.status(200).json({ salesmodes: ProductService.getSaleModesProduct() });
 }

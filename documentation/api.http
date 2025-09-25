@@ -26,7 +26,7 @@ GET http://localhost:8090/product/saleModes
 GET http://localhost:8090/product/search?name=SCaafe
 
 ### BUSCAR POR CODIGO DE BARRAS
-GET http://localhost:8090/product/search?barCode=1214567891123
+GET http://localhost:8090/product/search?barCode=1234167891011
 
 ### ACTUALIZAR PRODUCTO
 PUT http://localhost:8090/product/

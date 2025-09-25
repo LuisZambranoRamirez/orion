@@ -1,81 +1,92 @@
-import { registerProductDB, isProductBarCodeExistsDB, isProductNameExistsDB, getAllProductsDB, getMatchingProductByNameDB, getProductByBarCodeDB, updateProductByIdentifierDB } from '../data/product.js';
-import { validateProductBusinessRules, validatePartialProductBusiness, validateProductBarCode, validateProductName, categories, saleModes } from '../schemas/product.js';
+import { 
+  validateProductBusinessRules, 
+  validatePartialProductBusiness, 
+  validateProductBarCode, 
+  validateProductName, 
+  categories, 
+  saleModes 
+} from '../schemas/product.js';
+
 import { Result } from './Result.js';  
+import { ProductRepository } from '../data/productRepository.js';   // <-- usa tu repo
 
-export async function updateExistingProduct(product) {
-  const result = await validatePartialProductBusiness(product);
+export class ProductService {
 
-  if (!result.success) {
-    return Result.failure(JSON.parse(result.error)[0].message);
+  static async updateExistingProduct(product) {
+    const result = await validatePartialProductBusiness(product);
+
+    if (!result.success) {
+      return Result.failure(JSON.parse(result.error)[0].message);
+    }
+
+    const updateResult = await ProductRepository.updateProductByIdentifier(result.data);
+    if (!updateResult) {
+      return Result.failure('No se pudo actualizar el producto');
+    }
+    return Result.success('Producto actualizado con éxito');
   }
 
-  const updateResult = await updateProductByIdentifierDB(result.data);
-  if (!updateResult) {
-    return Result.failure('');
-  }
-  return Result.success('');
-}
+  static async registerProduct(product) {
+    const result = await validateProductBusinessRules(product);
 
-export async function registerProduct(product) {
-  const result = await validateProductBusinessRules(product);
+    if (!result.success) {
+      return Result.failure(JSON.parse(result.error)[0].message);
+    }
 
-  if (!result.success) {
-    return Result.failure(JSON.parse(result.error)[0].message);
-  }
+    const { name, barCode } = result.data;  
 
-  const { name, barCode } = result.data;  
+    if (await ProductRepository.isProductNameExists(name)) {
+      return Result.failure(`El producto -- ${name} -- ya está registrado`);
+    }
 
-  if(await isProductNameExistsDB(name)) {
-    return Result.failure(`El prodcuto -- ${name} -- ya esta registrado`);
-  }
+    if (await ProductRepository.isProductBarCodeExists(barCode)) {
+      return Result.failure(`El código de barras -- ${barCode} -- ya está registrado`);
+    }
 
-  if(await isProductBarCodeExistsDB(barCode)) {
-    return Result.failure(`El codigo de barras -- ${barCode} -- ya esta registrado`);
-  }
+    const registerResult = await ProductRepository.registerProduct(result.data);
+    if (!registerResult) {
+      return Result.failure('No se pudo registrar el producto');
+    }
+    return Result.success('Producto registrado con éxito');
+  } 
 
-  const registerResult = await registerProductDB(result.data);
-  if (!registerResult) {
-    return Result.failure('');
-  }
-  return Result.success('');
-} 
+  static async getMatchingProductByName(name) {
+    const result = await validateProductName(name);
 
-export async function getMatchingProductByName(name) {
-  const result = await validateProductName(name);
-  console.log(result)
-  if (!result.success) {
-    return Result.failure(JSON.parse(result.error)[0].message);
-  }
+    if (!result.success) {
+      return Result.failure(JSON.parse(result.error)[0].message);
+    }
 
-  const matchingProduct = await getMatchingProductByNameDB(name);
+    const matchingProduct = await ProductRepository.getMatchingProductByName(name);
 
-  return matchingProduct.length === 0
-    ? Result.failure(`El producto -- ${name} -- no está registrado`)
-    : Result.success(matchingProduct);
-}
-
-export async function getProductByBarCode(barCode) {
-  const result = await validateProductBarCode(barCode);
-
-  if (!result.success) {
-    return Result.failure(result.error);
+    return matchingProduct.length === 0
+      ? Result.failure(`El producto -- ${name} -- no está registrado`)
+      : Result.success(matchingProduct);
   }
 
-  const productByBarCode = await getProductByBarCodeDB(barCode);
-  
-  return productByBarCode.length === 0
-    ? Result.failure(`El código -- ${barCode} -- no está registrado`)
-    : Result.success(productByBarCode);
-}
+  static async getProductByBarCode(barCode) {
+    const result = await validateProductBarCode(barCode);
 
-export async function getAllProducts() {
-  return await getAllProductsDB();
-}
+    if (!result.success) {
+      return Result.failure(result.error);
+    }
 
-export function getCategoriesProduct() {
-  return categories;
-}
+    const productByBarCode = await ProductRepository.getProductByBarCode(barCode);
+    
+    return productByBarCode.length === 0
+      ? Result.failure(`El código -- ${barCode} -- no está registrado`)
+      : Result.success(productByBarCode);
+  }
 
-export function getSaleModesProduct() {
-  return saleModes;
+  static async getAllProducts() {
+    return await ProductRepository.getAllProducts();
+  }
+
+  static getCategoriesProduct() {
+    return categories;
+  }
+
+  static getSaleModesProduct() {
+    return saleModes;
+  }
 }
