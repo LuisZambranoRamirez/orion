@@ -49,7 +49,7 @@ const productBusinessRulesSchema = z.object({
   .max(4294967295 , "El nivel maximo para la alerta del stock debe ser menor a 4 294 967 295")
   .optional(),
 
-  barCode: barCodeschema,
+  barCode: barCodeschema.optional(),
 
   saleMode: z
   .enum(saleModes, {message: "El modo de venta no es válido"}),
