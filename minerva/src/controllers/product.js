@@ -1,10 +1,21 @@
 import { ProductService } from '../services/product.js';
-import { validateProductNameFormat } from '../schemas/product.js';
+
+import { 
+  validateProductBusinessRules, 
+  validatePartialProductBusiness, 
+  validateProductBarCode, 
+  validateProductName
+} from '../schemas/product.js';
 
 export class ProductController {
   static async updateProduct(req, res) {
     if (!req.query.name) {
       return res.status(422).json({ error: 'Se necesita el nombre del producto' });
+    }
+
+    const result = await validatePartialProductBusiness(req.body);    
+    if (!result.success) {
+      return res.status(422).json(JSON.parse(result.error)[0].message);
     }
 
     const updateResult = await ProductService.updateProduct(req.body);
@@ -15,14 +26,12 @@ export class ProductController {
   }
 
   static async register(req, res) {
-    const techResult = await validateProductNameFormat(req.body.name);
+    const result = await validateProductBusinessRules(req.body);
 
-    if (!techResult.success) {
-      return res.status(422).json({ error: JSON.parse(techResult.error)[0].message });
+    if (!result.success) {
+      return res.status(422).json(JSON.parse(result.error)[0].message);
     }
-
-    req.body.name = req.body.name.trim().replace(/\s+/g, ' ').toLowerCase();
-
+    
     const registerResult = await ProductService.registerProduct(req.body);
 
     return registerResult.isSuccess
@@ -50,6 +59,34 @@ export class ProductController {
     }
 
     return res.status(422).json({ error: 'Se necesita un identificador' });
+  }
+
+  static async getByName(req, res) {
+    const result = await validateProductName(req.query.name);
+    
+    if (!result.success) {
+      return res.status(422).json(JSON.parse(result.error)[0].message);
+    }
+
+    const matchingProduct = await ProductService.getMatchingProductByName(result.data);
+
+    return matchingProduct.isSuccess
+    ? res.status(200).json({ product: matchingProduct.value })
+    : res.status(422).json({ error: matchingProduct.error });
+  }
+
+  static async getByBarcode(req, res) {
+    const result = await validateProductBarCode(barCode);
+    
+    if (!result.success) {
+      return res.status(422).json(result.error);
+    }
+    
+    const productByBarCode = await ProductService.getProductByBarCode(result.data);
+
+    return productByBarCode.isSuccess
+    ? res.status(200).json({ product: productByBarCode.value })
+    : res.status(422).json({ error: productByBarCode.error });
   }
 
   static async getAll(req, res) {

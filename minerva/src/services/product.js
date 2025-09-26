@@ -1,8 +1,4 @@
 import { 
-  validateProductBusinessRules, 
-  validatePartialProductBusiness, 
-  validateProductBarCode, 
-  validateProductName, 
   categories, 
   saleModes 
 } from '../schemas/product.js';
@@ -12,37 +8,27 @@ import { ProductRepository } from '../data/product.js';   // <-- usa tu repo
 
 export class ProductService {
 
-  static async updateProduct(product) {
-    const result = await validatePartialProductBusiness(product);
-
-    if (!result.success) {
-      return Result.failure(JSON.parse(result.error)[0].message);
-    }
-
-    const updateResult = await ProductRepository.updateProductByIdentifier(result.data);
+  static async updateProduct({name, gainAmount, stock, reorderLevel, barCode, saleMode, category}) {
+    name = name.trim().replace(/\s+/g, ' ').toLowerCase();
+    
+    const updateResult = await ProductRepository.updateProductByIdentifier({name, gainAmount, stock, reorderLevel, barCode, saleMode, category});
     return updateResult
     ? Result.success('Producto actualizado con éxito')
     : Result.failure('No se pudo actualizar el producto');
   }
 
-  static async registerProduct(product) {
-    const result = await validateProductBusinessRules(product);
-
-    if (!result.success) {
-      return Result.failure(JSON.parse(result.error)[0].message);
-    }
-
-    const { name, barCode } = result.data;  
+  static async registerProduct({name, gainAmount, stock, reorderLevel, barCode, saleMode, category}) {
+    name = name.trim().replace(/\s+/g, ' ').toLowerCase();
 
     if (await ProductRepository.isProductNameExists(name)) {
       return Result.failure(`El producto -- ${name} -- ya está registrado`);
     }
 
-    if (await ProductRepository.isProductBarCodeExists(barCode)) {
+    if (barCode && await ProductRepository.isProductBarCodeExists(barCode)) {
       return Result.failure(`El código de barras -- ${barCode} -- ya está registrado`);
     }
 
-    const registerResult = await ProductRepository.registerProduct(result.data);
+    const registerResult = await ProductRepository.registerProduct({ name, gainAmount, stock, reorderLevel, barCode, saleMode, category });
 
     return registerResult
     ? Result.success('Producto registrado con éxito')
@@ -50,11 +36,7 @@ export class ProductService {
   } 
 
   static async getMatchingProductByName(name) {
-    const result = await validateProductName(name);
-
-    if (!result.success) {
-      return Result.failure(JSON.parse(result.error)[0].message);
-    }
+    
 
     const matchingProduct = await ProductRepository.getMatchingProductByName(name);
 
@@ -64,11 +46,7 @@ export class ProductService {
   }
 
   static async getProductByBarCode(barCode) {
-    const result = await validateProductBarCode(barCode);
-
-    if (!result.success) {
-      return Result.failure(result.error);
-    }
+    
 
     const productByBarCode = await ProductRepository.getProductByBarCode(barCode);
     
