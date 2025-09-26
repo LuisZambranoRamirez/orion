@@ -1,9 +1,9 @@
 
 ### TRAER TODOS LOS PRODCUTOS
-GET http://localhost:8090/product
+GET http://localhost:8090/products
 
 ### REGISTRAR UN PRODUCTO
-POST http://localhost:8090/product
+POST http://localhost:8090/products
 Content-Type: application/json
 
 {
@@ -16,19 +16,19 @@ Content-Type: application/json
 }
 
 ### TRAER TODAS LAS CATEGORIAS 
-GET http://localhost:8090/product/categories
+GET http://localhost:8090/products/categories
 
 ### TRAER TODOS LOS MODOS DE VENTA
-GET http://localhost:8090/product/sale-modes 
+GET http://localhost:8090/products/sale-modes 
 
 ### BUSCAR POR NOMBRE
-GET http://localhost:8090/product/by-name?name=cafeton
+GET http://localhost:8090/products/by-name?name=cafeton
 
 ### BUSCAR POR CODIGO DE BARRAS
-GET http://localhost:8090/product/by-barcode?barCode=1234167891011
+GET http://localhost:8090/products/by-barcode?barCode=1234167891011
 
 ### ACTUALIZAR PRODUCTO
-PUT http://localhost:8090/product?name=cafeton158
+PUT http://localhost:8090/products?name=cafeton158
 Content-Type: application/json
 
 {

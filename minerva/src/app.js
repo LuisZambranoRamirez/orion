@@ -18,8 +18,8 @@ app.get('/',(req, res) => {
   res.send('Drako el mas cerdin cerdon')
 });
 
-app.use('/product', productRouters);
-app.use('/supplier', supplierRouters);
+app.use('/products', productRouters);
+app.use('/suppliers', supplierRouters);
 
 app.use((req, res) =>{
   res.status(404).send('404 not found');
