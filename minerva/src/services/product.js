@@ -8,10 +8,11 @@ import { ProductRepository } from '../data/product.js';   // <-- usa tu repo
 
 export class ProductService {
 
-  static async updateProduct({name, gainAmount, stock, reorderLevel, barCode, saleMode, category}) {
+  static async updateProduct(nameId, {name, gainAmount, stock, reorderLevel, barCode, saleMode, category}) {
     name = name.trim().replace(/\s+/g, ' ').toLowerCase();
-    
-    const updateResult = await ProductRepository.updateProductByIdentifier({name, gainAmount, stock, reorderLevel, barCode, saleMode, category});
+    nameId = nameId.trim().replace(/\s+/g, ' ').toLowerCase();
+       
+    const updateResult = await ProductRepository.updateProductByIdentifier(nameId, {name, gainAmount, stock, reorderLevel, barCode, saleMode, category});
     return updateResult
     ? Result.success('Producto actualizado con éxito')
     : Result.failure('No se pudo actualizar el producto');
@@ -36,8 +37,7 @@ export class ProductService {
   } 
 
   static async getMatchingProductByName(name) {
-    
-
+    name = name.trim().replace(/\s+/g, ' ').toLowerCase();
     const matchingProduct = await ProductRepository.getMatchingProductByName(name);
 
     return matchingProduct.length === 0
@@ -46,8 +46,6 @@ export class ProductService {
   }
 
   static async getProductByBarCode(barCode) {
-    
-
     const productByBarCode = await ProductRepository.getProductByBarCode(barCode);
     
     return productByBarCode.length === 0

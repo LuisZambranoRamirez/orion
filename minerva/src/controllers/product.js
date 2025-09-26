@@ -9,16 +9,17 @@ import {
 
 export class ProductController {
   static async updateProduct(req, res) {
-    if (!req.query.name) {
-      return res.status(422).json({ error: 'Se necesita el nombre del producto' });
+    const nameResult = await validateProductName(req.query.name);
+    if (!nameResult.success) {
+      return res.status(422).json(JSON.parse(nameResult.error)[0].message);
+    }    
+
+    const productResult = await validatePartialProductBusiness(req.body);    
+    if (!productResult.success) {
+      return res.status(422).json(JSON.parse(productResult.error)[0].message);
     }
 
-    const result = await validatePartialProductBusiness(req.body);    
-    if (!result.success) {
-      return res.status(422).json(JSON.parse(result.error)[0].message);
-    }
-
-    const updateResult = await ProductService.updateProduct(req.body);
+    const updateResult = await ProductService.updateProduct(nameResult.data ,productResult.data);
 
     return updateResult.isSuccess
     ? res.status(200).json({ message: updateResult.value })
@@ -32,33 +33,11 @@ export class ProductController {
       return res.status(422).json(JSON.parse(result.error)[0].message);
     }
     
-    const registerResult = await ProductService.registerProduct(req.body);
+    const registerResult = await ProductService.registerProduct(result.data);
 
     return registerResult.isSuccess
     ? res.status(201).json({ message: registerResult.value })
     : res.status(422).json({ error: registerResult.error });
-  }
-
-  static async getByQuery(req, res) {
-    const { name, barCode } = req.query;
-
-    if (barCode) {
-      const result = await ProductService.getProductByBarCode(barCode);
-
-      return result.isSuccess
-      ? res.status(200).json({ product: result.value })
-      : res.status(422).json({ error: result.error });
-    }
-
-    if (name) {
-      const result = await ProductService.getMatchingProductByName(name);
-
-      return result.isSuccess
-      ? res.status(200).json({ product: result.value })
-      : res.status(422).json({ error: result.error });
-    }
-
-    return res.status(422).json({ error: 'Se necesita un identificador' });
   }
 
   static async getByName(req, res) {
@@ -76,12 +55,12 @@ export class ProductController {
   }
 
   static async getByBarcode(req, res) {
-    const result = await validateProductBarCode(barCode);
+    const result = await validateProductBarCode(req.query.barCode);
     
     if (!result.success) {
-      return res.status(422).json(result.error);
+      return res.status(422).json(JSON.parse(result.error)[0].message);
     }
-    
+
     const productByBarCode = await ProductService.getProductByBarCode(result.data);
 
     return productByBarCode.isSuccess

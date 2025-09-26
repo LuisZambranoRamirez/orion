@@ -7,10 +7,12 @@ productRouters.post('/', ProductController.register);
 
 productRouters.get('/categories', ProductController.getCategories);
 
-productRouters.get('/saleModes', ProductController.getSaleModes);
+productRouters.get('/sale-modes', ProductController.getSaleModes);
 
 productRouters.get('/', ProductController.getAll);
 
-productRouters.get('/search', ProductController.getByQuery);
+productRouters.get('/by-name', ProductController.getByName);
+
+productRouters.get('/by-barcode', ProductController.getByBarcode);
 
 productRouters.put('/', ProductController.updateProduct);
