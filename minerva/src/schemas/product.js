@@ -8,16 +8,12 @@ export async function validatePartialProductBusiness(object) {
   return productBusinessRulesSchema.partial().safeParseAsync(object);
 }
 
-export async function validateProductNameFormat(object) {
-  return nameFormatSchema.safeParseAsync(object);
-}
-
 export async function validateProductName(name) {
   return nameSchema.safeParseAsync(name);
 }
 
-export async function validateProductBarCode(object) {
-  return barCodeschema.safeParseAsync(object);
+export async function validateProductBarCode(barCode) {
+  return barCodeschema.safeParseAsync(barCode);
 }
 
 export const categories = ['Bebidas', 'Abarrotes/Secos', 'Café/Infusiones', 'Lácteos', 'Carnes', 'Snacks/Golosinas', 'Higiene/Cuidado Personal', 'Limpieza/hogar', 'Bebés/Mamá', 'Mascotas','otros'];
@@ -26,16 +22,13 @@ export const saleModes = ['Unidad', 'Granel', 'Unidad/Granel'];
 const nameSchema = z
   .string()
   .min(3,{message: "El nombre del producto debe tener al menos 3 caracteres"})
-  .max(50,{message: "El nombre del producto debe tener como máximo 50 caracteres"});
+  .max(50,{message: "El nombre del producto debe tener como máximo 50 caracteres"})
+  .regex(/^[A-Za-z0-9Ññ\s]+$/, {message: 'El nombre solo puede contener letras sin tildes y/o números'});
 
 const barCodeschema = z
   .string()
   .length(13,{message: "El código de barras debe tener exactamente 13 caracteres"})
   .regex(/^\d+$/, {message: "El código de barras solo debe contener números"});
-
-const nameFormatSchema = z
-  .string()
-  .regex(/^[A-Za-z0-9Ññ\s]+$/, {message: 'El nombre solo puede contener letras sin tildes y/o números'});
 
 const productBusinessRulesSchema = z.object({
   name: nameSchema,
