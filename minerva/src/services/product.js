@@ -9,8 +9,22 @@ import { ProductRepository } from '../data/product.js';
 export class ProductService {
 
   static async updateProduct(nameId, {name, gainAmount, stock, reorderLevel, barCode, saleMode, category}) {
-    name = name.trim().replace(/\s+/g, ' ').toLowerCase();
     nameId = nameId.trim().replace(/\s+/g, ' ').toLowerCase();
+
+    if (!(await ProductRepository.isProductNameExists(nameId))) {
+      return Result.failure(`El producto -- ${nameId} -- no está registrado`);
+    }
+
+    if (name) {
+      name = name.trim().replace(/\s+/g, ' ').toLowerCase();
+      if (await ProductRepository.isProductNameExists(name)) {
+        return Result.failure(`El producto -- ${name} -- ya está registrado`);
+      }
+    }
+
+    if (barCode && await ProductRepository.isProductBarCodeExists(barCode)) {
+      return Result.failure(`El código de barras -- ${barCode} -- ya está registrado`);
+    }
        
     const updateResult = await ProductRepository.updateProductByIdentifier(nameId, {name, gainAmount, stock, reorderLevel, barCode, saleMode, category});
     return updateResult

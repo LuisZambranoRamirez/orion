@@ -7,11 +7,10 @@ POST http://localhost:8090/product
 Content-Type: application/json
 
 {
-  "name": "cafe sapolio",
+  "name": "cafeton",
   "gainAmount": 5.50,
   "stock": 1,
   "reorderLevel": 10,
-  "barCode": "1234161891011",
   "saleMode": "Unidad",
   "category": "Café/Infusiones"
 }
@@ -20,20 +19,20 @@ Content-Type: application/json
 GET http://localhost:8090/product/categories
 
 ### TRAER TODOS LOS MODOS DE VENTA
-GET http://localhost:8090/product/saleModes 
+GET http://localhost:8090/product/sale-modes 
 
 ### BUSCAR POR NOMBRE
-GET http://localhost:8090/product/search?name=SCaafe
+GET http://localhost:8090/product/by-name?name=cafeton
 
 ### BUSCAR POR CODIGO DE BARRAS
-GET http://localhost:8090/product/search?barCode=1234167891011
+GET http://localhost:8090/product/by-barcode?barCode=1234167891011
 
 ### ACTUALIZAR PRODUCTO
-PUT http://localhost:8090/product/
+PUT http://localhost:8090/product?name=cafeton158
 Content-Type: application/json
 
 {
-  "name": "cafe",
+  "name": "Cafeton   grande  ",
   "gainAmount": 20,
   "reorderLevel": 10,
   "saleMode": "Unidad",
