@@ -4,7 +4,7 @@ import {
 } from '../schemas/product.js';
 
 import { Result } from './Result.js';  
-import { ProductRepository } from '../data/product.js';   // <-- usa tu repo
+import { ProductRepository } from '../data/product.js';  
 
 export class ProductService {
 
