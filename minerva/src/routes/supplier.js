@@ -3,4 +3,8 @@ import { register } from '../controllers/supplier.js';
 
 export const supplierRouters = Router();
 
-supplierRouters.post('/register', register);
+supplierRouters.post('/', register);
+
+supplierRouters.get('/',);
+
+supplierRouters.patch('/',);

@@ -3,14 +3,16 @@ import { Result } from './Result.js'; // Asegúrate de usar la ruta correcta
 
 import { validateSupplierSchemaBusinessRules } from '../schemas/supplier.js'
 
-export async function registerSupplier(req) {
-    const resultBusinessRules = await validateSupplierSchemaBusinessRules(req);
+export class SupplierService {
+    static async registerSupplier(req) {
+        const resultBusinessRules = await validateSupplierSchemaBusinessRules(req);
 
-    if (!resultBusinessRules.success) {
-        return Result.failure(JSON.parse(resultBusinessRules.error)[0].message);
+        if (!resultBusinessRules.success) {
+            return Result.failure(JSON.parse(resultBusinessRules.error)[0].message);
+        }
+
+        const {name, ruc, phone} = resultBusinessRules.data;
+
+        await registerSupplierDB(name, ruc, phone);
     }
-
-    const {name, ruc, phone} = resultBusinessRules.data;
-
-    await registerSupplierDB(name, ruc, phone);
 }

@@ -27,13 +27,13 @@ export class ProductController {
   }
 
   static async register(req, res) {
-    const result = await validateProductBusinessRules(req.body);
+    const productResult = await validateProductBusinessRules(req.body);
 
-    if (!result.success) {
-      return res.status(422).json(JSON.parse(result.error)[0].message);
+    if (!productResult.success) {
+      return res.status(422).json(JSON.parse(productResult.error)[0].message);
     }
     
-    const registerResult = await ProductService.registerProduct(result.data);
+    const registerResult = await ProductService.registerProduct(productResult.data);
 
     return registerResult.isSuccess
     ? res.status(201).json({ message: registerResult.value })

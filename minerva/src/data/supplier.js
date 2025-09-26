@@ -1,7 +1,8 @@
 import connection from './mysql.js';
 import { DataBaseError } from '../errors/dataBaseError.js';
 
-export async function registerSupplierDB(supplierNameId, ruc, phone) {
+export class SupplierRepository {
+ static async  registerSupplierDB({supplierNameId, ruc, phone}) {
   try {
 
     await connection.query(
@@ -13,4 +14,5 @@ export async function registerSupplierDB(supplierNameId, ruc, phone) {
     throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
   }
 
+}
 }
