@@ -4,11 +4,21 @@ export async function validateSupplierSchemaBusinessRules(object) {
   return supplierSchemaBusinessRules.safeParseAsync(object);
 }
 
+export async function validatePartialSupplierBusiness(object) {
+  return supplierSchemaBusinessRules.partial().safeParseAsync(object);
+}
+
+export async function validateSupplierName(name) {
+  return nameSchema.safeParseAsync(name);
+}
+
+const nameSchema = z
+  .string()
+  .min(3, { message: "El nombre del proveedor debe tener al menos 3 caracteres" })
+  .max(50, { message: "El nombre del proveedor debe tener como máximo 50 caracteres" });
+
 const supplierSchemaBusinessRules = z.object({
-  name: z
-    .string()
-    .min(3, { message: "El nombre del proveedor debe tener al menos 3 caracteres" })
-    .max(50, { message: "El nombre del proveedor debe tener como máximo 50 caracteres" }),
+  name: nameSchema,
 
   ruc: z
     .string()

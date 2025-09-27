@@ -3,52 +3,51 @@ import { DataBaseError } from '../errors/dataBaseError.js';
 
 export class ProductRepository {
   static async updateProductByIdentifier(nameId, { name, barCode, gainAmount, reorderLevel, saleMode, category, stock }) {
+    const fields = [];
+    const values = [];
+
+    if (gainAmount !== undefined) {
+      fields.push('gainAmount = ?');
+      values.push(gainAmount);
+    }
+
+    if (stock !== undefined) {
+      fields.push('stock = ?');
+      values.push(stock);
+    }
+
+    if (reorderLevel !== undefined) {
+      fields.push('reorderLevel = ?');
+      values.push(reorderLevel);
+    }
+
+    if (saleMode !== undefined) {
+      fields.push('saleMode = ?');
+      values.push(saleMode);
+    }
+
+    if (category !== undefined) {
+      fields.push('category = ?');
+      values.push(category);
+    }
+
+    if (barCode !== undefined) {
+      fields.push('barCode = ?');
+      values.push(barCode);
+    }
+
+    if (name !== undefined) {
+      fields.push('productNameId = ?');
+      values.push(name);
+    }
+
+    if (fields.length === 0) return false;
+
+    values.push(nameId);
+
+    const query = `UPDATE product SET ${fields.join(', ')} WHERE productNameId = ?`;
     try {
-      const fields = [];
-      const values = [];
-
-      if (gainAmount !== undefined) {
-        fields.push('gainAmount = ?');
-        values.push(gainAmount);
-      }
-
-      if (stock !== undefined) {
-        fields.push('stock = ?');
-        values.push(stock);
-      }
-
-      if (reorderLevel !== undefined) {
-        fields.push('reorderLevel = ?');
-        values.push(reorderLevel);
-      }
-
-      if (saleMode !== undefined) {
-        fields.push('saleMode = ?');
-        values.push(saleMode);
-      }
-
-      if (category !== undefined) {
-        fields.push('category = ?');
-        values.push(category);
-      }
-
-      if (barCode !== undefined) {
-        fields.push('barCode = ?');
-        values.push(barCode);
-      }
-
-      if (name !== undefined) {
-        fields.push('productNameId = ?');
-        values.push(name);
-      }
-
-      if (fields.length === 0) return false;
-
-      values.push(nameId);
-
-      const query = `UPDATE product SET ${fields.join(', ')} WHERE productNameId = ?`;
       const [rows] = await connection.query(query, values);
-
       return rows.affectedRows > 0;
     } catch (error) {
       throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
