@@ -47,9 +47,9 @@ export class ProductRepository {
       values.push(nameId);
 
       const query = `UPDATE product SET ${fields.join(', ')} WHERE productNameId = ?`;
-      const [result] = await connection.query(query, values);
+      const [rows] = await connection.query(query, values);
 
-      return result.affectedRows > 0;
+      return rows.affectedRows > 0;
     } catch (error) {
       throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
     }
@@ -72,11 +72,11 @@ export class ProductRepository {
   static async getMatchingProductByName(name) {
     try {
       const pattern = `%${name}%`;
-      const [result] = await connection.query(
+      const [rows] = await connection.query(
         'SELECT * FROM product WHERE productNameId LIKE ? LIMIT 3',
         [pattern]
       );
-      return result;
+      return rows;
     } catch (error) {
       throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
     }
@@ -84,11 +84,11 @@ export class ProductRepository {
 
   static async getProductByBarCode(barCode) {
     try {
-      const [result] = await connection.query(
+      const [rows] = await connection.query(
         'SELECT * FROM product WHERE barCode = ?',
         [barCode]
       );
-      return result;
+      return rows;
     } catch (error) {
       throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
     }
@@ -96,8 +96,8 @@ export class ProductRepository {
 
   static async getAllProducts() {
     try {
-      const [result] = await connection.query('SELECT * FROM product');
-      return result;
+      const [rows] = await connection.query('SELECT * FROM product');
+      return rows;
     } catch (error) {
       throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
     }
@@ -106,8 +106,8 @@ export class ProductRepository {
 
   static async isProductBarCodeExists(barCode) {
     try {
-      const [result] = await connection.query('SELECT barCode FROM product WHERE barCode = ?', [barCode]);
-      return result.length > 0 && result[0].barCode === barCode;
+      const [rows] = await connection.query('SELECT barCode FROM product WHERE barCode = ?', [barCode]);
+      return rows.length > 0 && rows[0].barCode === barCode;
     } catch (error) {
       throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
     }
@@ -116,8 +116,8 @@ export class ProductRepository {
 
   static async isProductNameExists(name) {
     try {
-      const [result] = await connection.query('SELECT productNameId FROM product WHERE productNameId = ?', [name]);
-      return result.length > 0 && result[0].productNameId === name;
+      const [rows] = await connection.query('SELECT productNameId FROM product WHERE productNameId = ?', [name]);
+      return rows.length > 0 && rows[0].productNameId === name;
     } catch (error) {
       throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
     }
