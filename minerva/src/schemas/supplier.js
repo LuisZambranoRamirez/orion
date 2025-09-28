@@ -17,7 +17,7 @@ const nameSchema = z
   .min(3, { message: "El nombre del proveedor debe tener al menos 3 caracteres" })
   .max(50, { message: "El nombre del proveedor debe tener como máximo 50 caracteres" })
   .regex(/^[A-Za-zÁÉÍÓÚÜáéíóúüÑñ\s]+$/, { message: "El nombre solo puede contener letras" })
-  .transform((val) => val.trim().replace(/\s+/g, ' ').toLowerCase());;
+  .transform((val) => val.trim().replace(/\s+/g, ' ').toLowerCase());
 
 const supplierSchemaBusinessRules = z.object({
   name: nameSchema,
