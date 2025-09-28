@@ -20,6 +20,10 @@ export class ProductService {
     if (barCode && await ProductRepository.isProductBarCodeExists(barCode)) {
       return Result.failure(`El código de barras -- ${barCode} -- ya está registrado`);
     }
+
+    if (barCode && saleMode && saleMode === 'Granel') {
+      return Result.failure('Los productos a granel no pueden tener código de barras');
+    }
        
     const updateResult = await ProductRepository.updateProductByIdentifier(nameId, {name, gainAmount, stock, reorderLevel, barCode, saleMode, category});
     return updateResult
