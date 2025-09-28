@@ -55,7 +55,7 @@ CREATE TABLE stockEntry (
     supplierNameId VARCHAR(50) NOT NULL,
     registrationDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     priceUnit DECIMAL(10,2) NOT NULL,
-    amount INT NOT NULL,
+    amount INT UNSIGNED NOT NULL,
     
     CONSTRAINT chk_stockEntry_price CHECK (priceUnit >= 0),
     CONSTRAINT chk_stockEntry_amount CHECK (amount > 0),
@@ -84,7 +84,7 @@ CREATE TABLE saleDetail (
     saleDetailId INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     saleId INT UNSIGNED NOT NULL,
     productNameId VARCHAR(50) NOT NULL,
-    amount INT NOT NULL,
+    amount INT UNSIGNED NOT NULL,
     priceUnit DECIMAL(10,2) NOT NULL,
     
     CONSTRAINT chk_saleDetail_amount CHECK (amount > 0),
