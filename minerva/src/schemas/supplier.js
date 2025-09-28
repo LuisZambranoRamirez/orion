@@ -12,7 +12,7 @@ export async function validateSupplierName(name) {
   return nameSchema.safeParseAsync(name);
 }
 
-const nameSchema = z
+export const nameSchema = z
   .string()
   .min(3, { message: "El nombre del proveedor debe tener al menos 3 caracteres" })
   .max(50, { message: "El nombre del proveedor debe tener como máximo 50 caracteres" })

@@ -19,7 +19,7 @@ export async function validateProductBarCode(barCode) {
 export const categories = ['Bebidas', 'Abarrotes/Secos', 'Café/Infusiones', 'Lácteos', 'Carnes', 'Snacks/Golosinas', 'Higiene/Cuidado Personal', 'Limpieza/hogar', 'Bebés/Mamá', 'Mascotas','otros'];
 export const saleModes = ['Unidad', 'Granel', 'Unidad/Granel'];
 
-const nameSchema = z
+export const nameSchema = z
   .string()
   .min(3,{message: "El nombre del producto debe tener al menos 3 caracteres"})
   .max(50,{message: "El nombre del producto debe tener como máximo 50 caracteres"})
