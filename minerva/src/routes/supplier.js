@@ -5,6 +5,8 @@ export const supplierRouters = Router();
 
 supplierRouters.post('/', SupplierController.register);
 
-supplierRouters.get('/',);
+supplierRouters.get('/', SupplierController.getAll);
 
-supplierRouters.patch('/',);
+supplierRouters.patch('/', SupplierController.update);
+
+supplierRouters.get('/by-name', SupplierController.getByName);

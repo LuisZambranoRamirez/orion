@@ -9,7 +9,7 @@ export class SupplierRepository {
       throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
     }
 
-    return await isSupplierRegistered(name);
+    return await this.isSupplierRegistered(name);
   }
 
   static async isSupplierRegistered(supplierNameId) {
@@ -50,7 +50,8 @@ export class SupplierRepository {
 
   static async getSupplierByIdentifier(supplierNameId) {
     try {
-      const [rows] = await connection.query('SELECT * FROM supplier WHERE supplierNameId = ?',[supplierNameId]);
+      const pattern = `%${supplierNameId}%`;
+      const [rows] = await connection.query('SELECT * FROM supplier WHERE supplierNameId LIKE ? LIMIT 3',[pattern]);
       return rows;
     } catch (error) {
       throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);

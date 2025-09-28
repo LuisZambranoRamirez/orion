@@ -51,9 +51,9 @@ export class SupplierController {
     const supplierResult = await SupplierService.getSupplierByName(supplierNameResult.data);
 
     return supplierResult.isSuccess
-    ? res.status(200).json({ supplier: supplierResult.value })
+    ? res.status(200).json({ suppliers: supplierResult.value })
     : res.status(422).json({ error: supplierResult.error });
   }
-  
+
 }
 

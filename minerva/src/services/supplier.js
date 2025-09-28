@@ -3,7 +3,6 @@ import { Result } from './Result.js';
 
 export class SupplierService {
     static async registerSupplier({name, ruc, phone}) {
-        name = name.trim().replace(/\s+/g, ' ').toLowerCase();
 
         if (await SupplierRepository.isSupplierRegistered(name)) {
             return Result.failure(`El proveedor -- ${name} -- ya está registrado`);
@@ -31,7 +30,6 @@ export class SupplierService {
     }
 
     static async updateSupplier(nameId, {name, ruc, phone}) {
-        nameId = nameId.trim().replace(/\s+/g, ' ').toLowerCase();
 
         if (!(await SupplierRepository.isSupplierRegistered(nameId))) {
             return Result.failure(`El proveedor -- ${nameId} -- no está registrado`);
@@ -59,7 +57,6 @@ export class SupplierService {
     }
 
     static async getSupplierByName(name) {
-        name = name.trim().replace(/\s+/g, ' ').toLowerCase();
         const supplier = await SupplierRepository.getSupplierByIdentifier(name);
         return supplier.length === 0
         ? Result.failure(`El proveedor -- ${name} -- no está registrado`)

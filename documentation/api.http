@@ -38,3 +38,29 @@ Content-Type: application/json
   "saleMode": "Unidad",
   "category": "Lácteos"
 }
+
+
+### TRAER TODOS LOS PROVEEDORES
+GET http://localhost:8090/suppliers
+
+### REGISTRAR UN PROVEEDOR
+POST http://localhost:8090/suppliers
+Content-Type: application/json
+
+{
+  "name": "Proveedor 3",
+  "phone": "147258369",
+  "ruc": "12345688910"
+}
+
+### ACTUALIZAR UN PROVEEDOR
+PATCH http://localhost:8090/suppliers?name=Proveedor 1 Editado
+Content-Type: application/json
+
+{
+  "name": "Proveedor 1 Editado.2",
+  "phone": "198765432"
+}
+
+### TRAER PROVEEDOR POR NOMBRE
+GET http://localhost:8090/suppliers/by-name?name=Proveedor
