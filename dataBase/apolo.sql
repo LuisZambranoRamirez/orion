@@ -55,10 +55,10 @@ CREATE TABLE stockEntry (
     supplierNameId VARCHAR(50) NOT NULL,
     registrationDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     priceUnit DECIMAL(10,2) NOT NULL,
-    amount INT UNSIGNED NOT NULL,
+    quantity INT UNSIGNED NOT NULL,
     
     CONSTRAINT chk_stockEntry_price CHECK (priceUnit >= 0),
-    CONSTRAINT chk_stockEntry_amount CHECK (amount > 0),
+    CONSTRAINT chk_stockEntry_quantity CHECK (quantity > 0),
     
     CONSTRAINT fk_stock_product FOREIGN KEY (productNameId)
         REFERENCES product(productNameId)
@@ -84,10 +84,10 @@ CREATE TABLE saleDetail (
     saleDetailId INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     saleId INT UNSIGNED NOT NULL,
     productNameId VARCHAR(50) NOT NULL,
-    amount INT UNSIGNED NOT NULL,
+    quantity INT UNSIGNED NOT NULL,
     priceUnit DECIMAL(10,2) NOT NULL,
     
-    CONSTRAINT chk_saleDetail_amount CHECK (amount > 0),
+    CONSTRAINT chk_saleDetail_quantity CHECK (quantity > 0),
     CONSTRAINT chk_saleDetail_priceUnit CHECK (priceUnit > 0),
 
     
@@ -104,12 +104,12 @@ CREATE TABLE saleDetail (
 CREATE TABLE inventoryLoss (
     inventoryLossId INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     productNameId VARCHAR(50) NOT NULL,
-    amount INT UNSIGNED NOT NULL,
+    quantity INT UNSIGNED NOT NULL,
     reason ENUM('Daño', 'Vencimiento', 'Robo', 'Perdido', 'Comsumo', 'Otro') NOT NULL,
     observation VARCHAR(255),
     registrationDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT chk_inventoryLoss_amount CHECK (amount > 0),
+    CONSTRAINT chk_inventoryLoss_quantity CHECK (quantity > 0),
 
     CONSTRAINT fk_inventoryLoss_product FOREIGN KEY (productNameId)
         REFERENCES product(productNameId)

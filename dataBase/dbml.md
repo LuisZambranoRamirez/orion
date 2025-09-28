@@ -89,9 +89,9 @@ Table stockEntry {
   supplierNameId varchar(50) [not null, ref: > supplier.supplierNameId] 
   registrarionDate timestamp [default: `CURRENT_TIMESTAMP`, not null]
   priceUnit decimal(10,2) [not null]
-  amount int [not null]
+  quantity int [not null]
 
-  Note: 'CHECK (priceUnit > 0 AND amount > 0)'
+  Note: 'CHECK (priceUnit > 0 AND quantity > 0)'
 }
 
 Table sale {
@@ -117,21 +117,21 @@ Table saleDetail {
   saleDetailId int [pk, increment]
   saleId int [not null, ref: > sale.saleId]
   productNameId varchar(50) [not null, ref: > product.productNameId]
-  amount int [not null]
+  quantity int [not null]
   priceUnit decimal(10,2) [not null]
 
-  Note: 'CHECK (amount > 0) AND CHECK (priceUnit > 0)'
+  Note: 'CHECK (quantity > 0) AND CHECK (priceUnit > 0)'
 }
 
 Table inventoryLoss {
   inventoryLossId int [pk, increment]
   productNameId varchar(50) [not null, ref: > product.productNameId]
-  amount int [not null]
+  quantity int [not null]
   reason InventoryLossReason [not null]
   observation varchar(255)
   registrarionDate timestamp [default: `CURRENT_TIMESTAMP`, not null]
 
-  Note: 'CHECK (amount > 0)'
+  Note: 'CHECK (quantity > 0)'
 }
 
 Table apiError {
