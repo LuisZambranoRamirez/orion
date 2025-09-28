@@ -35,11 +35,8 @@ export class SupplierService {
             return Result.failure(`El proveedor -- ${nameId} -- no está registrado`);
         }
 
-        if (name) {
-            name = name.trim().replace(/\s+/g, ' ').toLowerCase();
-            if (await SupplierRepository.isSupplierRegistered(name)) {
-                return Result.failure(`El proveedor -- ${name} -- ya está registrado`);
-            }
+        if (name && await SupplierRepository.isSupplierRegistered(name)) {
+            return Result.failure(`El proveedor -- ${name} -- ya está registrado`);            
         }
 
         if (ruc && await SupplierRepository.isSupplierRucExists(ruc)) {

@@ -13,11 +13,8 @@ export class ProductService {
       return Result.failure(`El producto -- ${nameId} -- no está registrado`);
     }
 
-    if (name) {
-      name = name.trim().replace(/\s+/g, ' ').toLowerCase();
-      if (await ProductRepository.isProductNameExists(name)) {
-        return Result.failure(`El producto -- ${name} -- ya está registrado`);
-      }
+    if (name && await ProductRepository.isProductNameExists(name)) {
+      return Result.failure(`El producto -- ${name} -- ya está registrado`);      
     }
 
     if (barCode && await ProductRepository.isProductBarCodeExists(barCode)) {
