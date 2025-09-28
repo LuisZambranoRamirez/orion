@@ -103,7 +103,7 @@ export class ProductRepository {
   }
 
 
-  static async isProductBarCodeExists(barCode) {
+  static async isProductBarCodeRegistered(barCode) {
     try {
       const [rows] = await connection.query('SELECT barCode FROM product WHERE barCode = ?', [barCode]);
       return rows.length > 0 && rows[0].barCode === barCode;

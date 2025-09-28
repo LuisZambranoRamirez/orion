@@ -17,7 +17,7 @@ export class ProductService {
       return Result.failure(`El producto -- ${name} -- ya está registrado`);      
     }
 
-    if (barCode && await ProductRepository.isProductBarCodeExists(barCode)) {
+    if (barCode && await ProductRepository.isProductBarCodeRegistered(barCode)) {
       return Result.failure(`El código de barras -- ${barCode} -- ya está registrado`);
     }
 
@@ -36,7 +36,7 @@ export class ProductService {
       return Result.failure(`El producto -- ${name} -- ya está registrado`);
     }
 
-    if (barCode && await ProductRepository.isProductBarCodeExists(barCode)) {
+    if (barCode && await ProductRepository.isProductBarCodeRegistered(barCode)) {
       return Result.failure(`El código de barras -- ${barCode} -- ya está registrado`);
     }
 
