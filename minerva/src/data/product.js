@@ -64,7 +64,7 @@ export class ProductRepository {
       throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
     }
 
-    return await this.isProductNameExists(name);
+    return await this.isProductNameRegistered(name);
   }
 
 
@@ -113,7 +113,7 @@ export class ProductRepository {
   }
 
 
-  static async isProductNameExists(name) {
+  static async isProductNameRegistered(name) {
     try {
       const [rows] = await connection.query('SELECT productNameId FROM product WHERE productNameId = ?', [name]);
       return rows.length > 0 && rows[0].productNameId === name;

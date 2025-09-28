@@ -9,11 +9,11 @@ import { ProductRepository } from '../data/product.js';
 export class ProductService {
 
   static async updateProduct(nameId, {name, gainAmount, stock, reorderLevel, barCode, saleMode, category}) {
-    if (!(await ProductRepository.isProductNameExists(nameId))) {
+    if (!(await ProductRepository.isProductNameRegistered(nameId))) {
       return Result.failure(`El producto -- ${nameId} -- no está registrado`);
     }
 
-    if (name && await ProductRepository.isProductNameExists(name)) {
+    if (name && await ProductRepository.isProductNameRegistered(name)) {
       return Result.failure(`El producto -- ${name} -- ya está registrado`);      
     }
 
@@ -32,7 +32,7 @@ export class ProductService {
   }
 
   static async registerProduct({name, gainAmount, stock, reorderLevel, barCode, saleMode, category}) {
-    if (await ProductRepository.isProductNameExists(name)) {
+    if (await ProductRepository.isProductNameRegistered(name)) {
       return Result.failure(`El producto -- ${name} -- ya está registrado`);
     }
 
