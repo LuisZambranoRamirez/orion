@@ -37,7 +37,8 @@ const productBusinessRulesSchema = z.object({
   gainAmount: z
   .number()
   .positive({message: "El monto de ganancia debe ser mayor a 0"})
-  .max(99999999.99, {message: "El monto de ganancia es demasiado grande"}),
+  .max(99999999.99, {message: "El monto de ganancia es demasiado grande"})
+  .refine((val) => /^\d+(\.\d{1,2})?$/.test(val.toString()), {message: "El monto de ganancia solo puede tener hasta dos decimales",}),
 
   stock: z
   .int()
