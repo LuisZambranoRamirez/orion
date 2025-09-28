@@ -36,6 +36,10 @@ export class ProductService {
       return Result.failure(`El código de barras -- ${barCode} -- ya está registrado`);
     }
 
+    if (barCode && saleMode === 'Granel') {
+      return Result.failure('Los productos a granel no pueden tener código de barras');
+    }
+
     const registerResult = await ProductRepository.registerProduct({ name, gainAmount, stock, reorderLevel, barCode, saleMode, category });
 
     return registerResult
