@@ -23,7 +23,8 @@ const nameSchema = z
   .string()
   .min(3,{message: "El nombre del producto debe tener al menos 3 caracteres"})
   .max(50,{message: "El nombre del producto debe tener como máximo 50 caracteres"})
-  .regex(/^[A-Za-z0-9Ññ\s]+$/, {message: 'El nombre solo puede contener letras sin tildes y/o números'});
+  .regex(/^[A-Za-z0-9Ññ\s]+$/, {message: 'El nombre solo puede contener letras sin tildes y/o números'})
+  .transform((val) => val.trim().replace(/\s+/g, ' ').toLowerCase());
 
 const barCodeschema = z
   .string()

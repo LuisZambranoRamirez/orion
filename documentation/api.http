@@ -7,7 +7,7 @@ POST http://localhost:8090/products
 Content-Type: application/json
 
 {
-  "name": "cafeton",
+  "name": "cafeATEtron158",
   "gainAmount": 5.50,
   "stock": 1,
   "reorderLevel": 10,
@@ -32,7 +32,7 @@ PUT http://localhost:8090/products?name=cafeton158
 Content-Type: application/json
 
 {
-  "name": "Cafeton   grande  ",
+  "name": "CaFetRon   grande  ",
   "gainAmount": 20,
   "reorderLevel": 10,
   "saleMode": "Unidad",
