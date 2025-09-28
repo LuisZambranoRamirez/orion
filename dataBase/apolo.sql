@@ -57,7 +57,7 @@ CREATE TABLE stockEntry (
     priceUnit DECIMAL(10,2) NOT NULL,
     amount INT NOT NULL,
     
-    CONSTRAINT chk_stockEntry_price CHECK (priceUnit > 0),
+    CONSTRAINT chk_stockEntry_price CHECK (priceUnit >= 0),
     CONSTRAINT chk_stockEntry_amount CHECK (amount > 0),
     
     CONSTRAINT fk_stock_product FOREIGN KEY (productNameId)
