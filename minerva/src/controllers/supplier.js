@@ -6,7 +6,7 @@ export class SupplierController {
     const supplierResult = await validateSupplierSchemaBusinessRules(req.body);
 
     if (!supplierResult.success) {
-      return res.status(422).json(JSON.parse(supplierResult.error)[0].message);
+      return res.status(422).json({error: JSON.parse(supplierResult.error)[0].message});
     }
 
     const registerResult = await SupplierService.registerSupplier(supplierResult.data);
@@ -27,12 +27,12 @@ export class SupplierController {
     const supplierNameResult = await validateSupplierName(req.query.name);
 
     if (!supplierNameResult.success) {
-      return res.status(422).json(JSON.parse(supplierNameResult.error)[0].message);
+      return res.status(422).json({error:JSON.parse(supplierNameResult.error)[0].message});
     }  
 
     const supplierResult = await validatePartialSupplierBusiness(req.body);
     if (!supplierResult.success) {
-      return res.status(422).json(JSON.parse(supplierResult.error)[0].message);
+      return res.status(422).json({error:JSON.parse(supplierResult.error)[0].message});
     }
 
     const updateResult = await SupplierService.updateSupplier(supplierNameResult.data, supplierResult.data);
@@ -45,7 +45,7 @@ export class SupplierController {
   static async getByName(req, res) {
     const supplierNameResult = await validateSupplierName(req.query.name);
     if (!supplierNameResult.success) {
-      return res.status(422).json(JSON.parse(supplierNameResult.error)[0].message);
+      return res.status(422).json({error:JSON.parse(supplierNameResult.error)[0].message});
     }
 
     const supplierResult = await SupplierService.getSupplierByName(supplierNameResult.data);

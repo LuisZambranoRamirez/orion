@@ -11,12 +11,12 @@ export class ProductController {
   static async updateProduct(req, res) {
     const nameResult = await validateProductName(req.query.name);
     if (!nameResult.success) {
-      return res.status(422).json(JSON.parse(nameResult.error)[0].message);
+      return res.status(422).json({error: JSON.parse(nameResult.error)[0].message});
     }    
 
     const productResult = await validatePartialProductBusiness(req.body);    
     if (!productResult.success) {
-      return res.status(422).json(JSON.parse(productResult.error)[0].message);
+      return res.status(422).json({error:JSON.parse(productResult.error)[0].message});
     }
 
     const updateResult = await ProductService.updateProduct(nameResult.data ,productResult.data);
@@ -30,7 +30,7 @@ export class ProductController {
     const productResult = await validateProductBusinessRules(req.body);
 
     if (!productResult.success) {
-      return res.status(422).json(JSON.parse(productResult.error)[0].message);
+      return res.status(422).json({error:JSON.parse(productResult.error)[0].message});
     }
     
     const registerResult = await ProductService.registerProduct(productResult.data);
@@ -44,7 +44,7 @@ export class ProductController {
     const result = await validateProductName(req.query.name);
     
     if (!result.success) {
-      return res.status(422).json(JSON.parse(result.error)[0].message);
+      return res.status(422).json({error:JSON.parse(result.error)[0].message});
     }
 
     const matchingProduct = await ProductService.getMatchingProductByName(result.data);
@@ -58,7 +58,7 @@ export class ProductController {
     const result = await validateProductBarCode(req.query.barCode);
     
     if (!result.success) {
-      return res.status(422).json(JSON.parse(result.error)[0].message);
+      return res.status(422).json({error:JSON.parse(result.error)[0].message});
     }
 
     const productByBarCode = await ProductService.getProductByBarCode(result.data);
