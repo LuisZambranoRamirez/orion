@@ -36,12 +36,18 @@ export class ProductService {
       return Result.failure(`El producto -- ${name} -- ya está registrado`);
     }
 
-    if (barCode && await ProductRepository.isProductBarCodeRegistered(barCode)) {
-      return Result.failure(`El código de barras -- ${barCode} -- ya está registrado`);
-    }
+    if (barCode) {
+      if (saleMode === 'Granel') {
+        return Result.failure('Los productos a granel no pueden tener código de barras');
+      }
 
-    if (barCode && saleMode === 'Granel') {
-      return Result.failure('Los productos a granel no pueden tener código de barras');
+      if (await ProductRepository.isProductBarCodeRegistered(barCode)) {
+        return Result.failure(`El código de barras -- ${barCode} -- ya está registrado`);
+      }      
+    } else {
+      if (saleMode === 'Unidad/Granel' || saleMode === 'Unidad') {
+        return Result.failure('Los productos por unidad deben tener código de barras');
+      }
     }
 
     const registerResult = await ProductRepository.registerProduct({ name, gainAmount, stock, reorderLevel, barCode, saleMode, category });
