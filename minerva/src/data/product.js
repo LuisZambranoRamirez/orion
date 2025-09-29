@@ -122,12 +122,4 @@ export class ProductRepository {
     }
   }
   
-  static async increaseStock(nameId, quantity) {
-    try {
-      const [rows] = await connection.query('UPDATE product SET stock = stock + ? WHERE productNameId = ?', [quantity, nameId]);
-      return rows.affectedRows > 0;
-    } catch (error) {
-      throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
-    }
-  }
 }
