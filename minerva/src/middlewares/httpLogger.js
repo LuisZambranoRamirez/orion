@@ -18,16 +18,16 @@ export function httpMonitorMiddleware(req, res, next) {
     const responseBody = res.sendData || {}; // Asumiendo que el body de la respuesta se guarda en res.sendData
 
     console.log(
-      `${new Date().toLocaleString()} | ` + // ← Aquí se agrega la hora
-      `${httpMethod.padEnd(8)} ` +          // GET, POST, etc.
-      `${endpoint.padEnd(20)} ` +           // /, /api/users, etc.
-      `${String(statusCode).padEnd(5)} - ` +
-      `${String(responseTimeMs).padEnd(8)} ms - ` +
-      `${String(responseSizeBytes).padEnd(8)} Bytes - ` +
-      `ip: ${ipAddress.padEnd(15)}`
+      `${new Date().toLocaleTimeString()} | ` + // ← Aquí se agrega la hora
+      `${httpMethod.padEnd(6)} ` +          // GET, POST, etc.
+      `${String(statusCode).padEnd(6)}` +
+      `| ${String(responseTimeMs).padEnd(8)} ms ` +
+      `| ${String(responseSizeBytes).padEnd(4)} Bytes ` +
+      `|  ip: ${ipAddress.padEnd(15)} ` +
+      `|  ${endpoint} ` 
     );
    
-    await registerLogConnection(ipAddress, httpMethod, endpoint, statusCode, responseTimeMs, responseSizeBytes, responseBody, requestBody);
+    registerLogConnection(ipAddress, httpMethod, endpoint, statusCode, responseTimeMs, responseSizeBytes, responseBody, requestBody);
   });
   next();
 }
