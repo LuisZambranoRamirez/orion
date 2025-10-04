@@ -163,6 +163,10 @@ CREATE TABLE productAudit (
     ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- Datos iniciales
+INSERT INTO supplier (supplierNameId) VALUES ('anonimo');
+INSERT INTO customer (customerNameId) VALUES ('anonimo');
+
 -- TRIGGERS
 -- SHOW TRIGGERS
 
