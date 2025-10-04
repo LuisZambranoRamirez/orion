@@ -8,13 +8,9 @@ import { ProductRepository } from '../data/product.js';
 
 export class ProductService {
 
-  static async updateProduct(nameId, {name, gainAmount, stock, reorderLevel, barCode, saleMode, category}) {
+  static async updateProduct(nameId, {gainAmount, stock, reorderLevel, barCode, saleMode, category}) {
     if (!(await ProductRepository.isProductNameRegistered(nameId))) {
       return Result.failure(`El producto -- ${nameId} -- no está registrado`);
-    }
-
-    if (name && await ProductRepository.isProductNameRegistered(name)) {
-      return Result.failure(`El producto -- ${name} -- ya está registrado`);      
     }
 
     if (barCode && await ProductRepository.isProductBarCodeRegistered(barCode)) {
@@ -25,7 +21,7 @@ export class ProductService {
       return Result.failure('Los productos a granel no pueden tener código de barras');
     }
        
-    const updateResult = await ProductRepository.updateProductByIdentifier(nameId, {name, gainAmount, stock, reorderLevel, barCode, saleMode, category});
+    const updateResult = await ProductRepository.updateProductByIdentifier(nameId, {gainAmount, stock, reorderLevel, barCode, saleMode, category});
     return updateResult
     ? Result.success('Producto actualizado con éxito')
     : Result.failure('No se pudo actualizar el producto');

@@ -2,7 +2,7 @@ import connection from './mysql.js';
 import { DataBaseError } from '../errors/dataBaseError.js';
 
 export class ProductRepository {
-  static async updateProductByIdentifier(nameId, { name, barCode, gainAmount, reorderLevel, saleMode, category, stock }) {
+  static async updateProductByIdentifier(nameId, {barCode, gainAmount, reorderLevel, saleMode, category, stock }) {
     const fields = [];
     const values = [];
 
@@ -34,11 +34,6 @@ export class ProductRepository {
     if (barCode !== undefined) {
       fields.push('barCode = ?');
       values.push(barCode);
-    }
-
-    if (name !== undefined) {
-      fields.push('productNameId = ?');
-      values.push(name);
     }
 
     if (fields.length === 0) return false;
