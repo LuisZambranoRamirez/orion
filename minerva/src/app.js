@@ -6,6 +6,7 @@ import { errorHandler } from './middlewares/errorHandler.js';
 // ROUTES
 import { productRouters } from './routes/product.js';
 import { supplierRouters } from './routes/supplier.js';
+import { stockEntryRouters } from './routes/stockEntry.js';
 
 export const app = express();
 
@@ -20,6 +21,7 @@ app.get('/',(req, res) => {
 
 app.use('/products', productRouters);
 app.use('/suppliers', supplierRouters);
+app.use('/stock-entries', stockEntryRouters);
 
 app.use((req, res) =>{
   res.status(404).send('404 not found');

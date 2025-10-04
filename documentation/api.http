@@ -7,11 +7,12 @@ POST http://localhost:8090/products
 Content-Type: application/json
 
 {
-  "name": "cafeATEtron158",
-  "gainAmount": 5.50,
+  "name": "leche",
+  "gainAmount": 9.9,
   "stock": 1,
+  "barCode": "1472583611856",
   "reorderLevel": 10,
-  "saleMode": "Unidad",
+  "saleMode": "Unidad/Granel",
   "category": "Café/Infusiones"
 }
 
@@ -25,18 +26,18 @@ GET http://localhost:8090/products/sale-modes
 GET http://localhost:8090/products/by-name?name=cafeton
 
 ### BUSCAR POR CODIGO DE BARRAS
-GET http://localhost:8090/products/by-barcode?barCode=1234167891011
+GET http://localhost:8090/products/by-barcode?barCode=1472583694856
 
 ### ACTUALIZAR PRODUCTO
-PUT http://localhost:8090/products?name=cafeton158
+PUT http://localhost:8090/products?name=drako
 Content-Type: application/json
 
 {
-  "name": "CaFetRon   grande  ",
-  "gainAmount": 20,
+  "gainAmount": 3,
   "reorderLevel": 10,
   "saleMode": "Unidad",
-  "category": "Lácteos"
+  "category": "Lácteos",
+  "barCode": "0234567890123"
 }
 
 
@@ -48,19 +49,38 @@ POST http://localhost:8090/suppliers
 Content-Type: application/json
 
 {
-  "name": "Proveedor 3",
-  "phone": "147258369",
-  "ruc": "12345688910"
+  "name": "Anonimo"
 }
 
 ### ACTUALIZAR UN PROVEEDOR
-PATCH http://localhost:8090/suppliers?name=Proveedor 1 Editado
+PATCH http://localhost:8090/suppliers?name=anonimo
 Content-Type: application/json
 
 {
-  "name": "Proveedor 1 Editado.2",
+  "name": "Proveedor 1",
   "phone": "198765432"
 }
 
 ### TRAER PROVEEDOR POR NOMBRE
-GET http://localhost:8090/suppliers/by-name?name=Proveedor
+GET http://localhost:8090/suppliers/by-name?name=anonimo
+
+
+### REGISTRAR UNA COMPRA
+POST http://localhost:8090/stock-entries
+Content-Type: application/json
+
+{
+  "productName": "leche",
+  "supplierName": "anonimo",
+  "priceUnit": 1.5,
+  "quantity": 10
+}
+
+### TRAER TODAS LAS ENTRADAS DE STOCK
+GET http://localhost:8090/stock-entries
+
+### TRAER ENTRADAS DE STOCK POR PRODUCTO
+GET http://localhost:8090/stock-entries/by-product?productName=leche
+
+### TRAER ENTRADAS DE STOCK POR PROVEEDOR
+GET http://localhost:8090/stock-entries/by-supplier?supplierName=anonimo
