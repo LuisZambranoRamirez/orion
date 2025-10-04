@@ -37,18 +37,6 @@ CREATE TABLE product (
     CONSTRAINT chk_gain_amount_non_negative CHECK (gainAmount > 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE productGainAmountHistory (
-  productoGainAmountHistoryId INT AUTO_INCREMENT PRIMARY KEY,
-  productNameId VARCHAR(50) NOT NULL,
-  gainAmount DECIMAL(10,2) NOT NULL,
-  registrationDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  
-  CONSTRAINT fk_productoGainAmountHistory_product FOREIGN KEY (productNameId) 
-    REFERENCES product(productNameId)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
 CREATE TABLE stockEntry (
     stockEntryId INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     productNameId VARCHAR(50) NOT NULL,
@@ -155,14 +143,25 @@ CREATE TABLE connectionLog (
   registrationDate  DATETIME DEFAULT CURRENT_TIMESTAMP,
   
   CONSTRAINT chck_status_code_limit_is_599 CHECK (statusCode <= 599)
-
-  
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- INDEX extra si buscas por fecha o producto frecuentemente
--- CREATE INDEX idx_sale_customerName ON sale(customerName);
--- CREATE INDEX idx_stockEntry_supplier ON stockEntry(supplier);
--- CREATE INDEX idx_product_category ON product(category);
+CREATE TABLE productAudit (
+  productAuditId INT AUTO_INCREMENT PRIMARY KEY,
+  productNameId VARCHAR(50) NOT NULL,
+  oldProductNameId VARCHAR(50),
+  gainAmount DECIMAL(10,2),
+  stock INT UNSIGNED,
+  reorderLevel INT UNSIGNED,    
+  barCode VARCHAR(13),
+  saleMode VARCHAR(100),
+  
+  registrationDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  
+  CONSTRAINT fk_productAudit_product FOREIGN KEY (productNameId) 
+    REFERENCES product(productNameId)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- TRIGGERS
 -- SHOW TRIGGERS
@@ -174,14 +173,42 @@ CREATE TRIGGER trg_product_after_update
 AFTER UPDATE ON product
 FOR EACH ROW
 BEGIN
-    -- Solo registrar si realmente cambió el precio
-    IF NEW.gainAmount <> OLD.gainAmount THEN
-        INSERT INTO productGainAmountHistory (productNameId, gainAmount)
-        VALUES (NEW.productNameId, NEW.gainAmount);
+    DECLARE oldProductNameId VARCHAR(50);
+    DECLARE gainAmount DECIMAL(10,2);
+    DECLARE stock INT;
+    DECLARE reorderLevel INT;
+    DECLARE barCode VARCHAR(13);
+    DECLARE saleMode VARCHAR(100);
+
+    IF NEW.productNameId <> OLD.productNameId THEN
+        SET oldProductNameId = OLD.productNameId;
     END IF;
+
+    IF NEW.gainAmount <> OLD.gainAmount THEN
+        SET gainAmount = NEW.gainAmount;
+    END IF;
+
+    IF NEW.stock <> OLD.stock THEN
+        SET stock = NEW.stock;
+    END IF;
+
+    IF NEW.reorderLevel <> OLD.reorderLevel THEN
+        SET reorderLevel = NEW.reorderLevel;
+    END IF;
+
+    IF NEW.barCode <> OLD.barCode THEN
+        SET barCode = NEW.barCode;
+    END IF;
+
+    IF NEW.saleMode <> OLD.saleMode THEN
+        SET saleMode = NEW.saleMode;
+    END IF;
+       
+    INSERT INTO productAudit (productNameId, oldProductNameId, gainAmount, stock, reorderLevel, barCode, saleMode)
+    VALUES (NEW.productNameId, oldProductNameId, gainAmount, stock, reorderLevel, barCode, saleMode);
 END $$
 
-CREATE TRIGGER tgr_pay_before
+CREATE TRIGGER trg_pay_before_insert
 BEFORE INSERT ON pay 
 FOR EACH ROW
 BEGIN    
@@ -204,5 +231,15 @@ BEGIN
         SET MESSAGE_TEXT = 'El pago excede el total de la venta.';
     END IF;
 END $$ 
+
+CREATE TRIGGER trg_stockEntry_after_insert
+AFTER INSERT ON stockEntry
+FOR EACH ROW
+BEGIN
+    -- Actualizar el stock del producto
+    UPDATE product
+    SET stock = stock + NEW.quantity
+    WHERE productNameId = NEW.productNameId;
+END $$
 
 DELIMITER ;
