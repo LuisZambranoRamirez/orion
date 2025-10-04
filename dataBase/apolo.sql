@@ -168,7 +168,7 @@ CREATE TABLE productAudit (
 
 DELIMITER $$
 
--- Guarda el historial de precios de los productos
+-- Guarda el historial de los productos
 CREATE TRIGGER trg_product_after_update
 AFTER UPDATE ON product
 FOR EACH ROW
@@ -206,6 +206,14 @@ BEGIN
        
     INSERT INTO productAudit (productNameId, oldProductNameId, gainAmount, stock, reorderLevel, barCode, saleMode)
     VALUES (NEW.productNameId, oldProductNameId, gainAmount, stock, reorderLevel, barCode, saleMode);
+END $$
+
+CREATE TRIGGER trg_product_after_insert
+AFTER INSERT ON product
+FOR EACH ROW
+BEGIN
+    INSERT INTO productAudit (productNameId, gainAmount, stock, reorderLevel, barCode, saleMode)
+    VALUES (NEW.productNameId, NEW.gainAmount, NEW.stock, NEW.reorderLevel, NEW.barCode, NEW.saleMode);
 END $$
 
 CREATE TRIGGER trg_pay_before_insert
