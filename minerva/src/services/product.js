@@ -54,12 +54,20 @@ export class ProductService {
     : Result.failure('No se pudo registrar el producto');
   } 
 
-  static async getMatchingProductByName(name) {
-    const matchingProduct = await ProductRepository.getMatchingProductByName(name);
+  static async getListMatchingName(name) {
+    const matchingProduct = await ProductRepository.getListMatchingName(name);
 
     return matchingProduct.length === 0
     ? Result.failure(`El producto -- ${name} -- no está registrado`)
     : Result.success(matchingProduct);
+  }
+
+  static async getProductByName(name) {
+    const productByName = await ProductRepository.getProductByName(name);
+
+    return productByName.length === 0
+    ? Result.failure(`El producto -- ${name} -- no está registrado`)
+    : Result.success(productByName);
   }
 
   static async getProductByBarCode(barCode) {

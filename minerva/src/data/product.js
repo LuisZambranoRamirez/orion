@@ -63,12 +63,24 @@ export class ProductRepository {
   }
 
 
-  static async getMatchingProductByName(name) {
+  static async getListMatchingName(name) {
     try {
       const pattern = `%${name}%`;
       const [rows] = await connection.query(
-        'SELECT * FROM product WHERE productNameId LIKE ? LIMIT 3',
+        'SELECT productNameId FROM product WHERE productNameId LIKE ? LIMIT 3',
         [pattern]
+      );
+      return rows;
+    } catch (error) {
+      throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
+    }
+  }
+
+  static async getProductByName(name) {
+    try {
+      const [rows] = await connection.query(
+        'SELECT * FROM product WHERE productNameId = ?',
+        [name]
       );
       return rows;
     } catch (error) {

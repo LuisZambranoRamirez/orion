@@ -47,7 +47,7 @@ export class ProductController {
       return res.status(422).json({error:JSON.parse(result.error)[0].message});
     }
 
-    const matchingProduct = await ProductService.getMatchingProductByName(result.data);
+    const matchingProduct = await ProductService.getProductByName(result.data);
 
     return matchingProduct.isSuccess
     ? res.status(200).json({ product: matchingProduct.value })
