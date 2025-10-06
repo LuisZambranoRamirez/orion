@@ -15,4 +15,6 @@ productRouters.get('/by-name', ProductController.getByName);
 
 productRouters.get('/by-barcode', ProductController.getByBarcode);
 
-productRouters.put('/', ProductController.updateProduct);
+productRouters.patch('/', ProductController.updateProduct);
+
+productRouters.get('/matching-name', ProductController.getListMatchingName);

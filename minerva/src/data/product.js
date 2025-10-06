@@ -70,6 +70,9 @@ export class ProductRepository {
         'SELECT productNameId FROM product WHERE productNameId LIKE ? LIMIT 3',
         [pattern]
       );
+      for (let i = 0; i < rows.length; i++) {
+        rows[i] = rows[i].productNameId;        
+      }      
       return rows;
     } catch (error) {
       throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);

@@ -54,6 +54,20 @@ export class ProductController {
     : res.status(422).json({ error: matchingProduct.error });
   }
 
+  static async getListMatchingName(req, res) {
+    const result = await validateProductName(req.query.name);
+
+    if (!result.success) {
+      return res.status(422).json({error:JSON.parse(result.error)[0].message});
+    }
+
+    const matchingProduct = await ProductService.getListMatchingName(result.data);
+
+    return matchingProduct.isSuccess
+    ? res.status(200).json({ products: matchingProduct.value })
+    : res.status(422).json({ error: matchingProduct.error });
+  }
+
   static async getByBarcode(req, res) {
     const result = await validateProductBarCode(req.query.barCode);
     
