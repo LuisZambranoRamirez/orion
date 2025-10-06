@@ -7,10 +7,9 @@ POST http://localhost:8090/products
 Content-Type: application/json
 
 {
-  "name": "leche",
+  "name": "drako",
   "gainAmount": 9.9,
-  "stock": 1,
-  "barCode": "1472583611856",
+  "barCode": "1472593611856",
   "reorderLevel": 10,
   "saleMode": "Unidad/Granel",
   "category": "Café/Infusiones"

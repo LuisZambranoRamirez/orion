@@ -27,7 +27,7 @@ export class ProductService {
     : Result.failure('No se pudo actualizar el producto');
   }
 
-  static async registerProduct({name, gainAmount, stock, reorderLevel, barCode, saleMode, category}) {
+  static async registerProduct({name, gainAmount, reorderLevel, barCode, saleMode, category}) {
     if (await ProductRepository.isProductNameRegistered(name)) {
       return Result.failure(`El producto -- ${name} -- ya está registrado`);
     }
@@ -45,7 +45,8 @@ export class ProductService {
         return Result.failure('Los productos por unidad deben tener código de barras');
       }
     }
-
+    
+    const stock = 0;
     const registerResult = await ProductRepository.registerProduct({ name, gainAmount, stock, reorderLevel, barCode, saleMode, category });
 
     return registerResult

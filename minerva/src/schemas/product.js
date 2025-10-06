@@ -40,11 +40,6 @@ const productBusinessRulesSchema = z.object({
   .max(99999999.99, {message: "El monto de ganancia es demasiado grande"})
   .refine((val) => /^\d+(\.\d{1,2})?$/.test(val.toString()), {message: "El monto de ganancia solo puede tener hasta dos decimales",}),
 
-  stock: z
-  .int()
-  .min(0, "El nivel minimo de stock debe ser mayor o igual a cero")
-  .max(4294967295, "El nivel maximo para el stock debe ser menor a 4 294 967 295"),
-
   reorderLevel: z
   .int()
   .min(0 , "El nivel minimo para la alerta del stock debe ser mayor a cero")
