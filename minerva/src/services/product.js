@@ -71,10 +71,9 @@ export class ProductService {
     }
 
     const price = await this.calculatePrice(name, productByName.gainAmount);
-    if (price === -1) {
-      return Result.failure(`El producto -- ${name} -- no tiene entradas de stock registradas`);
+    if (price !== -1) {
+      productByName.price = price;
     }
-    productByName.price = price;
 
     return Result.success(productByName);
   }
@@ -87,10 +86,9 @@ export class ProductService {
     }
 
     const price = await this.calculatePrice(productByBarCode.productNameId, productByBarCode.gainAmount);
-    if (price === -1) {
-      return Result.failure(`El producto -- ${productByBarCode.productNameId} -- no tiene entradas de stock registradas`);
+    if (price !== -1) {
+      productByBarCode.price = price;
     }
-    productByBarCode.price = price;
 
     return Result.success(productByBarCode);
   }
@@ -107,7 +105,9 @@ export class ProductService {
     const listProducts = await ProductRepository.getAllProducts();
     for (let i = 0; i < listProducts.length; i++) {
       const price = await this.calculatePrice(listProducts[i].productNameId, listProducts[i].gainAmount);
-      listProducts[i].price = price === -1 ? 'N/A' : price;
+      if (price !== -1) { 
+        listProducts[i].price = price;
+      }
     }
     return listProducts;
   }
