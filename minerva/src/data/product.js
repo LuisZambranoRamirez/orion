@@ -85,7 +85,7 @@ export class ProductRepository {
         'SELECT * FROM product WHERE productNameId = ?',
         [name]
       );
-      return rows;
+      return rows[0];
     } catch (error) {
       throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
     }
@@ -97,7 +97,7 @@ export class ProductRepository {
         'SELECT * FROM product WHERE barCode = ?',
         [barCode]
       );
-      return rows;
+      return rows[0];
     } catch (error) {
       throw new DataBaseError(error.code, error.errno, error.sqlMessage, error.sqlState, error.sql);
     }

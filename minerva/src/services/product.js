@@ -5,6 +5,7 @@ import {
 
 import { Result } from './Result.js';  
 import { ProductRepository } from '../data/product.js';  
+import { StockEntryRepository } from '../data/stockEntry.js';
 
 export class ProductService {
 
@@ -65,21 +66,50 @@ export class ProductService {
   static async getProductByName(name) {
     const productByName = await ProductRepository.getProductByName(name);
 
-    return productByName.length === 0
-    ? Result.failure(`El producto -- ${name} -- no está registrado`)
-    : Result.success(productByName);
+    if (productByName.length === 0) {
+      return Result.failure(`El producto -- ${name} -- no está registrado`);
+    }
+
+    const price = await this.calculatePrice(name, productByName.gainAmount);
+    if (price === -1) {
+      return Result.failure(`El producto -- ${name} -- no tiene entradas de stock registradas`);
+    }
+    productByName.price = price;
+
+    return Result.success(productByName);
   }
 
   static async getProductByBarCode(barCode) {
     const productByBarCode = await ProductRepository.getProductByBarCode(barCode);
     
-    return productByBarCode.length === 0
-    ? Result.failure(`El código -- ${barCode} -- no está registrado`)
-    : Result.success(productByBarCode);
+    if (productByBarCode.length === 0) {
+      return Result.failure(`El código -- ${barCode} -- no está registrado`);
+    }
+
+    const price = await this.calculatePrice(productByBarCode.productNameId, productByBarCode.gainAmount);
+    if (price === -1) {
+      return Result.failure(`El producto -- ${productByBarCode.productNameId} -- no tiene entradas de stock registradas`);
+    }
+    productByBarCode.price = price;
+
+    return Result.success(productByBarCode);
+  }
+
+  // ESTA FUNCION DEBE SER PRIVADA
+  static async calculatePrice(productName, gainAmount) {
+    const stockEntry = await StockEntryRepository.getFirstEntryOnLatestDate(productName);
+    if (!stockEntry) return -1;
+    
+    return Number(stockEntry.priceUnit) + Number(gainAmount);
   }
 
   static async getAllProducts() {
-    return await ProductRepository.getAllProducts();
+    const listProducts = await ProductRepository.getAllProducts();
+    for (let i = 0; i < listProducts.length; i++) {
+      const price = await this.calculatePrice(listProducts[i].productNameId, listProducts[i].gainAmount);
+      listProducts[i].price = price === -1 ? 'N/A' : price;
+    }
+    return listProducts;
   }
 
   static getCategoriesProduct() {
